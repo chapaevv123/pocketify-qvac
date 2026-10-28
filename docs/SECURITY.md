@@ -8,3 +8,11 @@
 - Tickets in the dataset are synthetic. Do not put customer secrets in demo inputs or commit environment files. QVAC local inference reduces exposure to external AI providers, but local OS users and processes with access to this machine may still inspect data or model caches.
 - The model can be inaccurate, especially on ambiguous requests. The report retains every mismatch and does not invent a cloud baseline. Client RSS and host free RAM are not precise worker memory measurements.
 - The optional QVAC HTTP server should bind to loopback by default. This MVP uses the direct SDK because the server's KV cache path is protected in the Codex sandbox.
+
+## Studio-specific controls
+
+- Studio binds to `127.0.0.1` by default. Its fixed static asset list prevents path traversal. API requests require a loopback Host; cross-origin POST requests are rejected. Only JSON request bodies up to 8 KiB are accepted. The web UI uses text nodes for model output and scan findings to avoid HTML injection.
+- API routes never accept a filesystem path or shell command. Migration touches only the ignored dedicated `examples/studio-workspace/`, uses the existing validated migration function, and retains the backup. Its reset action replaces only the demo config.
+- The Offline Challenge does not change Windows adapters, firewall, registry, drivers or network settings. It probes DNS, TCP, HTTPS and ICMP to external targets before and after inference. A reachable probe makes FAIL, including when another probe fails. An unavailable probe makes UNVERIFIED unless an external route is known reachable. A checked manual-disconnection box is a user statement, not an independently authenticated Windows adapter state.
+- A receipt contains model identity, timings, probe results and SHA-256 hashes of input/output, but no raw ticket text. It is saved locally under ignored `.studio/receipts/`. Anyone with local filesystem access may still inspect tickets during processing or receipts afterward. A receipt is not cryptographic proof of total network isolation.
+- The public GitHub Pages showcase has no inference API. It displays stored evaluations and a genuine captured screenshot. Do not deploy `.studio/`, `.qvac/`, model weights, `node_modules/`, or owner evidence logs.

@@ -1,4 +1,37 @@
-# Pocketify — move a ticket AI workflow from cloud to your device
+# POCKETIFY / STUDIO
+
+**Turn off the internet. Keep the intelligence.**
+
+Move a supported AI workflow from cloud dependency to local QVAC inference — then prove it works offline. Pocketify Studio is a local developer instrument for real ticket triage, a conservative offline challenge, a controlled migration demo, and evidence-backed benchmarks. Built for **AI Yako: Own Your AI / Cloud to Pocket**.
+
+![Actual Pocketify Studio Local capture](site/studio-desktop.png)
+
+![Actual QVAC Ticket Triage output in Studio](site/studio-live-lab.png)
+
+## Launch Studio
+
+From Windows PowerShell in this repository:
+
+```powershell
+.\scripts\start-studio.ps1
+```
+
+Open **http://127.0.0.1:4317**. The launcher installs project-local packages only if missing, creates local QVAC config if needed, builds static evidence data, and starts the loopback-only server. Cache the model once while connected with `node .\qvac-gate.mjs`; the launcher does not download model weights automatically. If PowerShell blocks local scripts, use `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`. `npm.cmd run studio` starts the server directly after setup.
+
+The same `site/` files form the static [public showcase](https://chapaevv123.github.io/pocketify-qvac/) **after GitHub Pages deployment**. The public page displays measured records and a captured local screenshot; it cannot run QVAC or claim live inference. A deployment URL is valid only when the Pages workflow completes.
+
+### Five-minute judge path
+
+1. Click **Launch the Lab**, select a sample ticket, and click **Analyze Locally**. The output, model ID and measured inference time come from the official QVAC SDK.
+2. Click **Start Offline Challenge** while connected to load the cached model. Manually disconnect Wi-Fi in Windows or unplug Ethernet, leaving `localhost` open. Check the manual-disconnect box, then click **Verify & Infer**. Studio checks local reachability, DNS, TCP, HTTPS and ICMP before/after real inference and generates a downloadable JSON receipt. Reconnect manually afterward.
+3. Click **See the Migration**, run the scanner, apply the supported config migration, inspect the generated backup and changed config, then reset the dedicated demo workspace.
+4. Inspect the actual ten-ticket evaluation, outcome matrix, per-ticket latency, run variability and explicit **CLOUD BASELINE NOT MEASURED** label. Use **Run Fresh Evaluation** for a new real run.
+
+The prior owner-run physical offline inference is reported, but its saved log lacks a simultaneous network record. The new challenge requires all tested external routes to fail before and after inference; its receipt is evidence of those checks, not cryptographic proof of total isolation. In the Codex sandbox, ICMP reached `1.1.1.1` during a genuine challenge run, so Studio correctly recorded `FAIL`. A final physically disconnected receipt and video remain owner actions.
+
+Studio uses `127.0.0.1`, fixed routes, an 8 KiB request cap, same-origin POST checks, a dedicated ignored migration workspace, and no arbitrary shell or filesystem API. The local QVAC backend and original CLI are shared; there is no second inference engine. See [architecture](docs/ARCHITECTURE.md) and [security](docs/SECURITY.md).
+
+## Pocketify CLI — move a ticket AI workflow from cloud to your device
 
 **Cloud to Pocket track · AI Yako: Own Your AI**
 
@@ -46,6 +79,9 @@ The script refuses to call the run offline if either probe succeeds. Failed prob
 | `node pocketify.mjs eval [--offline]` | Evaluate ten independent labels and write JSON and HTML reports. |
 | `npm.cmd test` | Pure unit tests. |
 | `npm.cmd run test:integration` | Test with the real cached QVAC model. |
+| `npm.cmd run test:studio` | Studio API, challenge verdict and migration safety tests. |
+| `npm.cmd run test:studio:integration` | Real QVAC inference and challenge receipt via Studio API. |
+| `npm.cmd run build:showcase` | Rebuild public static data from committed evaluation evidence. |
 
 The supported migration contract is a JS/TS repository with `new OpenAICompatClient(config)` and a root `pocketify.json` matching the bundled example. The scanner also identifies common `openai` imports, constructors, chat completions, and Responses API calls **for review only**. Pocketify does not rewrite arbitrary source files or promise automatic migration of unrelated repositories. It writes a backup before changing the supported config and rejects unknown configurations.
 The example includes a cloud HTTPS transport for the original workflow, but it is disabled unless a user explicitly sets `POCKETIFY_ALLOW_CLOUD=1` and provides `OPENAI_API_KEY`. No such call was made for this project. The hackathon demo uses the migrated QVAC path and needs no key or paid service.
@@ -69,20 +105,19 @@ The example includes a cloud HTTPS transport for the original workflow, but it i
 
 See [architecture](docs/ARCHITECTURE.md), [security and limitations](docs/SECURITY.md), [measured evidence](docs/EVIDENCE.md), and [submission materials](docs/SUBMISSION.md). Work created for this event: scanner, migration, Ticket Triage app, dataset, evaluator, report, tests, and docs. QVAC and model weights are third-party dependencies credited above.
 
-## Publishing
+## Publishing the Studio update
 
-GitHub publishing requires a valid owner login. In an ordinary PowerShell window, check `gh auth status`, then verify that `pocketify-qvac` does not already exist. If it is free, run:
+The existing repository is [chapaevv123/pocketify-qvac](https://github.com/chapaevv123/pocketify-qvac). Review and publish the update from ordinary PowerShell if `gh auth status` is valid. The Pages workflow in `.github/workflows/pages.yml` deploys `site/` after a push to `main`, provided **Settings → Pages → Build and deployment → Source: GitHub Actions** is selected.
 
 ```powershell
-Set-Location C:\path\to\Pocketify
-$repo = (Resolve-Path .).Path
-git -c "safe.directory=$repo" add .
-git -c "safe.directory=$repo" commit -m "Build Pocketify QVAC MVP"
-gh auth login -h github.com
-gh repo view chapaevv123/pocketify-qvac  # must report not found before creation
-gh repo create chapaevv123/pocketify-qvac --public
-git -c "safe.directory=$repo" remote add origin https://github.com/chapaevv123/pocketify-qvac.git
-git -c "safe.directory=$repo" push -u origin main
+Set-Location C:\Users\Win10_Game_OS\Projects\Pocketify
+gh auth status
+# If authentication is invalid: gh auth login -h github.com
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify status --short
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify add .gitignore .github README.md docs package.json scripts site studio tests
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify diff --cached --check
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify commit -m "Build Pocketify Studio local lab and showcase"
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify push origin main
 ```
 
-If the repo name already exists, stop and inspect it; do not overwrite it. Confirm with `git -c "safe.directory=$repo" ls-files` that `.qvac/`, `node_modules/`, `evidence/`, `.env`, and model weights are absent. The Codex sandbox could initialize `.git` but could not create its lock files, and its GitHub token was invalid; these commands are therefore owner actions. The per-command `safe.directory` setting changes no global Git configuration. Submit the DoraHacks Build only after reviewing the public repository and recording a playable offline demo video.
+Confirm with `git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify ls-files` that `.qvac/`, `node_modules/`, `evidence/`, `.env`, and model weights are absent. The per-command `safe.directory` override changes no global Git configuration. Do not submit the DoraHacks Build until the owner reviews the public site, captures a playable offline demo video, and approves submission.

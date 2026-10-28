@@ -1,5 +1,7 @@
 node_modules/
 .qvac/
+.studio/
+examples/studio-workspace/
 qvac.config.json
 .npm-cache/
 evidence/
