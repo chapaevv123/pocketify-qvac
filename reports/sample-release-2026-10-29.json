@@ -1,0 +1,142 @@
+{
+  "generatedAt": "2026-10-28T22:36:52.670Z",
+  "backend": "@qvac/sdk",
+  "sdkVersion": "0.22.0",
+  "model": "QWEN3_600M_INST_Q4",
+  "modelFile": "Qwen3-0.6B-Q4_0.gguf",
+  "modelExpectedBytes": 382156480,
+  "modelSha256": "33bcc57074ec7b6eada5a90651ee546ec0c2b271002c22baf9f1b2dd1e8f75cb",
+  "offlineRequested": true,
+  "networkProbe": {
+    "target": "1.1.1.1:443",
+    "reachable": false,
+    "detail": "EACCES"
+  },
+  "offlineEvidence": "QVAC cached-model run while outbound TCP probe failed; a failed probe alone does not prove complete network isolation.",
+  "cloudBaseline": "NOT MEASURED",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v22.23.1",
+    "cpus": [
+      "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+    ],
+    "totalRamBytes": 34245525504
+  },
+  "memory": {
+    "hostFreeBeforeBytes": 13513330688,
+    "hostFreeAfterLoadBytes": 12534640640,
+    "hostFreeAfterEvalBytes": 13113081856,
+    "note": "Host free RAM is a system-wide snapshot, not QVAC process memory. clientRssBytes excludes the QVAC worker."
+  },
+  "loadMs": 5810,
+  "accuracy": 0.6,
+  "correct": 6,
+  "count": 10,
+  "successfulInferences": 10,
+  "medianLatencyMs": 158,
+  "minLatencyMs": 145,
+  "maxLatencyMs": 6936,
+  "rows": [
+    {
+      "id": "B01",
+      "text": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+      "expected": "billing",
+      "predicted": "other",
+      "summary": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+      "correct": false,
+      "latencyMs": 6936,
+      "clientRssBytes": 66056192
+    },
+    {
+      "id": "B02",
+      "text": "The invoice for September has the wrong company name and tax details.",
+      "expected": "billing",
+      "predicted": "billing",
+      "summary": "The invoice for September contains incorrect company name and tax details.",
+      "correct": true,
+      "latencyMs": 153,
+      "clientRssBytes": 66809856
+    },
+    {
+      "id": "U01",
+      "text": "The export button crashes with an error every time I download a CSV file.",
+      "expected": "bug",
+      "predicted": "bug",
+      "summary": "The export button crashes with an error every time a CSV file is downloaded.",
+      "correct": true,
+      "latencyMs": 162,
+      "clientRssBytes": 67481600
+    },
+    {
+      "id": "U02",
+      "text": "After saving a ticket, the page goes blank and my changes disappear.",
+      "expected": "bug",
+      "predicted": "access",
+      "summary": "After saving a ticket, the page goes blank and your changes disappear. This may be due to an issue with the ticket system or the page not being updated properly.",
+      "correct": false,
+      "latencyMs": 223,
+      "clientRssBytes": 67751936
+    },
+    {
+      "id": "A01",
+      "text": "My password reset link expired and I cannot sign in to my account.",
+      "expected": "access",
+      "predicted": "other",
+      "summary": "The password reset link expired, and you are unable to sign in to your account.",
+      "correct": false,
+      "latencyMs": 169,
+      "clientRssBytes": 68362240
+    },
+    {
+      "id": "A02",
+      "text": "Please grant our new teammate permission to view the support dashboard.",
+      "expected": "access",
+      "predicted": "access",
+      "summary": "The new teammate has been granted permission to view the support dashboard.",
+      "correct": true,
+      "latencyMs": 148,
+      "clientRssBytes": 68657152
+    },
+    {
+      "id": "F01",
+      "text": "Could you add dark mode to the dashboard in a future release?",
+      "expected": "feature",
+      "predicted": "other",
+      "summary": "Could you add dark mode to the dashboard in a future release?",
+      "correct": false,
+      "latencyMs": 157,
+      "clientRssBytes": 69177344
+    },
+    {
+      "id": "F02",
+      "text": "We would like a new Slack notification when a high priority ticket arrives.",
+      "expected": "feature",
+      "predicted": "feature",
+      "summary": "We would like a new Slack notification when a high priority ticket arrives.",
+      "correct": true,
+      "latencyMs": 158,
+      "clientRssBytes": 69271552
+    },
+    {
+      "id": "O01",
+      "text": "What are your support hours during the holiday weekend?",
+      "expected": "other",
+      "predicted": "other",
+      "summary": "I am not available during the holiday weekend support hours.",
+      "correct": true,
+      "latencyMs": 145,
+      "clientRssBytes": 69369856
+    },
+    {
+      "id": "O02",
+      "text": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+      "expected": "other",
+      "predicted": "other",
+      "summary": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+      "correct": true,
+      "latencyMs": 158,
+      "clientRssBytes": 68870144
+    }
+  ]
+}

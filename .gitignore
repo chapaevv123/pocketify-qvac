@@ -1,0 +1,15 @@
+node_modules/
+.qvac/
+qvac.config.json
+.npm-cache/
+evidence/
+reports/latest.json
+reports/latest.html
+*.cloud.backup
+*.tmp
+dxdiag.txt
+.env
+.env.*
+*.log
+PREFLIGHT.md
+RUN-IN-NORMAL-POWERSHELL.md

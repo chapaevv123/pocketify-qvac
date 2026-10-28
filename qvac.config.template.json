@@ -1,0 +1,17 @@
+{
+  "loggerLevel": "info",
+  "loggerConsoleOutput": true,
+  "cacheDirectory": "SET_BY_SETUP_SCRIPT",
+  "httpDownloadConcurrency": 3,
+  "httpConnectionTimeoutMs": 10000,
+  "serve": {
+    "models": {
+      "pocketify-qwen3-0.6b": {
+        "model": "QWEN3_600M_INST_Q4",
+        "preload": true,
+        "default": true,
+        "config": { "ctx_size": 2048, "reasoning_budget": 0 }
+      }
+    }
+  }
+}

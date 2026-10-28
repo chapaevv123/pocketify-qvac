@@ -1,0 +1,21 @@
+{
+  "name": "pocketify",
+  "version": "1.0.0",
+  "description": "Cloud to Pocket migration demo with real local QVAC ticket triage",
+  "type": "module",
+  "bin": { "pocketify": "./pocketify.mjs" },
+  "scripts": {
+    "test": "node --test tests/unit.test.mjs",
+    "test:integration": "node --test tests/qvac.integration.test.mjs",
+    "scan": "node pocketify.mjs scan examples/ticket-triage",
+    "triage": "node pocketify.mjs triage",
+    "eval": "node pocketify.mjs eval"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@qvac/cli": "0.17.0",
+    "@qvac/sdk": "0.22.0"
+  }
+}

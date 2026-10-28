@@ -1,0 +1,12 @@
+[
+  { "id": "B01", "text": "I was charged twice for my monthly subscription. Please refund the duplicate payment.", "expected": "billing" },
+  { "id": "B02", "text": "The invoice for September has the wrong company name and tax details.", "expected": "billing" },
+  { "id": "U01", "text": "The export button crashes with an error every time I download a CSV file.", "expected": "bug" },
+  { "id": "U02", "text": "After saving a ticket, the page goes blank and my changes disappear.", "expected": "bug" },
+  { "id": "A01", "text": "My password reset link expired and I cannot sign in to my account.", "expected": "access" },
+  { "id": "A02", "text": "Please grant our new teammate permission to view the support dashboard.", "expected": "access" },
+  { "id": "F01", "text": "Could you add dark mode to the dashboard in a future release?", "expected": "feature" },
+  { "id": "F02", "text": "We would like a new Slack notification when a high priority ticket arrives.", "expected": "feature" },
+  { "id": "O01", "text": "What are your support hours during the holiday weekend?", "expected": "other" },
+  { "id": "O02", "text": "Thanks for the helpful documentation; I just wanted to share positive feedback.", "expected": "other" }
+]

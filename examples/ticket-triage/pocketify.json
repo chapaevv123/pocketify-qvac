@@ -1,0 +1,9 @@
+{
+  "provider": "qvac-sdk",
+  "model": "QWEN3_600M_INST_Q4",
+  "migratedFrom": {
+    "provider": "cloud-openai-compatible",
+    "baseURL": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini"
+  }
+}
