@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: pocketify-studio
+    runtime: static
+    buildCommand: node scripts/build-showcase.mjs
+    staticPublishPath: ./site
+    envVars:
+      - key: SKIP_INSTALL_DEPS
+        value: 'true'

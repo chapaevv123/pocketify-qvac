@@ -22,7 +22,7 @@ The scanner recognizes common OpenAI SDK syntax for review, but migration is lim
 
 ## Pocketify Studio surfaces
 
-`site/` is one framework-free HTML/CSS/JavaScript interface. `studio/server.mjs` serves those same files on `127.0.0.1:4317` and exposes fixed JSON endpoints. GitHub Pages publishes `site/` as a static showcase using `scripts/build-showcase.mjs`, which transforms committed evaluation JSON and real source text into `site/data.json`. On GitHub Pages the UI disables all live actions and says local inference requires Studio. There is no simulated QVAC response.
+`site/` is one framework-free HTML/CSS/JavaScript interface. `studio/server.mjs` serves those same files on `127.0.0.1:4317` and exposes fixed JSON endpoints. Render publishes `site/` as a Static Site using `scripts/build-showcase.mjs`, which transforms committed evaluation JSON and real source text into `site/data.json`. The Render build skips package installation and never starts QVAC. In public mode the UI disables live actions, lets visitors inspect recorded QVAC ticket results, and says new inference requires local Studio. There is no simulated QVAC response.
 
 ```mermaid
 flowchart LR
@@ -33,7 +33,7 @@ flowchart LR
   Scan --> Workspace[Dedicated ignored demo workspace]
   Server --> Probe[DNS / TCP / HTTPS / ICMP probes]
   Server --> Eval[Existing evaluation runner]
-  Pages[GitHub Pages showcase] --> Data[Committed real report data]
+  Render[Render static showcase] --> Data[Committed real report data]
 ```
 
 The Live Lab calls `POST /api/triage`; the server holds one QVAC model instance for repeated requests. The Offline Challenge first calls `/api/prepare` while connected, then the owner disconnects manually. `/api/challenge/verify` records external probes; `/api/challenge/infer` runs genuine triage, probes again, and writes a JSON receipt under ignored `.studio/receipts/`. A PASS requires the owner's disconnection confirmation, a reachable local server, successful inference, and all external checks blocked both before and after. Any reachable route makes FAIL. Probe errors that cannot determine reachability make UNVERIFIED. This is a bounded connectivity test, not proof of every possible route.

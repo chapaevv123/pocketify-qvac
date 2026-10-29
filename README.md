@@ -18,11 +18,17 @@ From Windows PowerShell in this repository:
 
 Open **http://127.0.0.1:4317**. The launcher installs project-local packages only if missing, creates local QVAC config if needed, builds static evidence data, and starts the loopback-only server. Cache the model once while connected with `node .\qvac-gate.mjs`; the launcher does not download model weights automatically. If PowerShell blocks local scripts, use `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`. `npm.cmd run studio` starts the server directly after setup.
 
-The same `site/` files form the static [public showcase](https://chapaevv123.github.io/pocketify-qvac/) **after GitHub Pages deployment**. The public page displays measured records and a captured local screenshot; it cannot run QVAC or claim live inference. A deployment URL is valid only when the Pages workflow completes.
+The same `site/` files form a **Render Static Site** after deployment. The public page lets visitors inspect recorded QVAC ticket outputs and measured evaluations; it cannot run QVAC or claim live inference. No public Render URL is claimed until the deployed site has been verified.
+
+## Render Static Site
+
+The root [render.yaml](render.yaml) describes the deployment. In Render, choose **New → Static Site**, connect `chapaevv123/pocketify-qvac`, select `main`, leave Root Directory blank, set Build Command to `node scripts/build-showcase.mjs`, and Publish Directory to `site`. Set the build environment variable `SKIP_INSTALL_DEPS=true`. Then click **Create Static Site**. No paid instance, API key, model download or QVAC package installation is needed on Render. Render builds only the static showcase from committed evaluation data. No SPA fallback or web server is required.
+
+The local Windows Studio remains the only surface that performs new QVAC inference and the Offline Challenge. The public site links to its launch instructions and labels every sample output as a **recorded** local result with its source run and expected category. The owner-run disconnected inference is reported, but a complete public offline PASS receipt and video are pending. Cloud baseline remains **NOT MEASURED**.
 
 ### Five-minute judge path
 
-1. Click **Launch the Lab**, select a sample ticket, and click **Analyze Locally**. The output, model ID and measured inference time come from the official QVAC SDK.
+1. Click **Explore the Demo**, select a sample ticket, and click **Analyze Locally** in Local Studio. The output, model ID and measured inference time come from the official QVAC SDK. On Render, selecting a sample shows only its labeled recorded result.
 2. Click **Start Offline Challenge** while connected to load the cached model. Manually disconnect Wi-Fi in Windows or unplug Ethernet, leaving `localhost` open. Check the manual-disconnect box, then click **Verify & Infer**. Studio checks local reachability, DNS, TCP, HTTPS and ICMP before/after real inference and generates a downloadable JSON receipt. Reconnect manually afterward.
 3. Click **See the Migration**, run the scanner, apply the supported config migration, inspect the generated backup and changed config, then reset the dedicated demo workspace.
 4. Inspect the actual ten-ticket evaluation, outcome matrix, per-ticket latency, run variability and explicit **CLOUD BASELINE NOT MEASURED** label. Use **Run Fresh Evaluation** for a new real run.
@@ -107,16 +113,16 @@ See [architecture](docs/ARCHITECTURE.md), [security and limitations](docs/SECURI
 
 ## Publishing the Studio update
 
-The existing repository is [chapaevv123/pocketify-qvac](https://github.com/chapaevv123/pocketify-qvac). Review and publish the update from ordinary PowerShell if `gh auth status` is valid. The Pages workflow in `.github/workflows/pages.yml` deploys `site/` after a push to `main`, provided **Settings → Pages → Build and deployment → Source: GitHub Actions** is selected.
+The existing repository is [chapaevv123/pocketify-qvac](https://github.com/chapaevv123/pocketify-qvac). Review and publish this Render update from ordinary PowerShell if `gh auth status` is valid. Render deploys new commits to `main` after the static site has been created.
 
 ```powershell
 Set-Location C:\Users\Win10_Game_OS\Projects\Pocketify
 gh auth status
 # If authentication is invalid: gh auth login -h github.com
 git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify status --short
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify add .gitignore .github README.md docs package.json scripts site studio tests
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify add -A -- render.yaml README.md docs site .github scripts/verify-showcase.mjs
 git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify diff --cached --check
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify commit -m "Build Pocketify Studio local lab and showcase"
+git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify commit -m "Deploy Pocketify Studio showcase on Render"
 git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify push origin main
 ```
 
