@@ -8,7 +8,7 @@ import { triage } from '../src/triage.mjs';
 import { scanRepository } from '../src/scanner.mjs';
 import { migrateExample } from '../src/migration.mjs';
 import { evaluate } from '../src/evaluation.mjs';
-import { probeExternal, challengeVerdict } from './probes.mjs';
+import { probeExternal, explainChallenge } from './probes.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = path.join(root, 'site');
@@ -113,7 +113,23 @@ const assets = new Map([
   ['/studio-desktop.png', ['studio-desktop.png', 'image/png']],
   ['/studio-live-lab.png', ['studio-live-lab.png', 'image/png']],
   ['/data.json', ['data.json', 'application/json; charset=utf-8']],
+  ['/offline.html', ['offline.html', 'text/html; charset=utf-8']],
+  ['/evidence.html', ['evidence.html', 'text/html; charset=utf-8']],
+  ['/pages.css', ['pages.css', 'text/css; charset=utf-8']],
+  ['/pages.js', ['pages.js', 'text/javascript; charset=utf-8']],
+  ['/evidence-page.js', ['evidence-page.js', 'text/javascript; charset=utf-8']],
+  ['/evidence/receipts.json', ['evidence/receipts.json', 'application/json; charset=utf-8']],
 ]);
+for (const name of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
+  'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-demo-captions.vtt', 'source-manifest.json']) {
+  assets.set(`/media/${name}`, [`media/${name}`, name.endsWith('.mp4') ? 'video/mp4' : name.endsWith('.webp') ? 'image/webp' :
+    name.endsWith('.vtt') ? 'text/vtt; charset=utf-8' : 'application/json; charset=utf-8']);
+}
+for (const name of ['sample-2026-10-29.json', 'sample-release-2026-10-29.json', 'sample-current-2026-10-29.json',
+  'prompt-refined-run-1.json', 'prompt-refined-run-2.json'])
+  assets.set(`/evidence/runs/${name}`, [`evidence/runs/${name}`, 'application/json; charset=utf-8']);
+for (const id of ['38baaf0f-f070-4e61-bf1a-5c55b8a5199c', '63ac8842-8be4-48fa-952e-39bbb728a002'])
+  assets.set(`/evidence/receipts/${id}.json`, [`evidence/receipts/${id}.json`, 'application/json; charset=utf-8']);
 
 export function createStudioServer() {
   const server = http.createServer(async (req, res) => {
@@ -187,11 +203,11 @@ export function createStudioServer() {
           try { inference = await triage(client, body.ticket); }
           catch (error) { console.error(`[studio] challenge inference: ${error.stack || error.message}`); inferenceError = 'QVAC inference failed; check the Studio terminal.'; }
           const after = await probeExternal();
-          const verdict = challengeVerdict({ manualDisconnected: pending.manualDisconnected, before, after,
+          const decision = explainChallenge({ manualDisconnected: pending.manualDisconnected, before, after,
             inferenceSucceeded: Boolean(inference), localServerReached: true,
             warmupCompleted: warmup?.completed === true, onlineObservation: warmup?.onlineObservation });
           const id = randomUUID();
-          const receipt = { id, at: new Date().toISOString(), verdict, manualDisconnected: pending.manualDisconnected,
+          const receipt = { id, at: new Date().toISOString(), verdict: decision.verdict, verdictReason: decision.reason, manualDisconnected: pending.manualDisconnected,
             localServerReached: true, externalBefore: before, externalAfter: after,
             model: MODEL.name, modelFile: MODEL.modelId, modelId: client.modelId,
             sdkVersion: '0.22.0', ticketSha256: digest(body.ticket), ticket: body.ticket,

@@ -5,12 +5,15 @@ import { spawn } from 'node:child_process';
 const LIMIT_MS = 2500;
 const resolver = new dns.Resolver();
 resolver.setServers(['1.1.1.1']);
-const blockedCodes = new Set(['EACCES', 'ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ABORT_ERR']);
+const blockedCodes = new Set(['EACCES', 'ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT']);
+const ambiguousCodes = new Set(['ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ABORT_ERR', 'TimeoutError']);
 const make = (name, target, state, detail, durationMs) => ({ name, target, state, detail, durationMs });
 
-function classify(error) {
+export function classifyProbeError(error, transport = 'generic') {
   const code = error?.code || error?.cause?.code || error?.name || 'UNKNOWN';
-  return { state: blockedCodes.has(code) ? 'BLOCKED' : 'UNAVAILABLE', detail: String(code) };
+  if (transport === 'tcp' && code === 'ECONNREFUSED') return { state: 'REACHABLE', detail: String(code) };
+  return { state: blockedCodes.has(code) ? 'BLOCKED' : 'UNAVAILABLE', detail: String(code),
+    reason: ambiguousCodes.has(code) ? 'The failure does not establish external network isolation.' : undefined };
 }
 
 async function dnsProbe() {
@@ -23,7 +26,7 @@ async function dnsProbe() {
     ]);
     return make('DNS', 'example.com A via 1.1.1.1', 'REACHABLE', `${answer.length} address(es)`, Math.round(performance.now() - start));
   } catch (error) {
-    const x = classify(error);
+    const x = classifyProbeError(error, 'dns');
     return make('DNS', 'example.com A via 1.1.1.1', x.state, x.detail, Math.round(performance.now() - start));
   } finally { clearTimeout(timer); }
 }
@@ -42,8 +45,8 @@ function tcpProbe() {
     socket.setTimeout(LIMIT_MS, () => finish('BLOCKED', 'timeout'));
     socket.once('connect', () => finish('REACHABLE', 'connected'));
     socket.once('error', (error) => {
-      const x = classify(error);
-      finish(error.code === 'ECONNREFUSED' ? 'REACHABLE' : x.state, error.code || x.detail);
+      const x = classifyProbeError(error, 'tcp');
+      finish(x.state, error.code || x.detail);
     });
   });
 }
@@ -56,7 +59,7 @@ async function httpsProbe() {
     });
     return make('HTTPS', 'https://example.com', 'REACHABLE', `HTTP ${response.status}`, Math.round(performance.now() - start));
   } catch (error) {
-    const x = classify(error);
+    const x = classifyProbeError(error, 'https');
     // A TLS validation error still means the remote host was reached.
     const state = /CERT|TLS|SSL/.test(x.detail) ? 'REACHABLE' : x.state;
     return make('HTTPS', 'https://example.com', state, x.detail, Math.round(performance.now() - start));
@@ -84,13 +87,18 @@ export async function probeExternal() {
   const checks = await Promise.all([dnsProbe(), tcpProbe(), httpsProbe(), icmpProbe()]);
   return { at: new Date().toISOString(), checks,
     status: checks.some((x) => x.state === 'REACHABLE') ? 'REACHABLE' :
-      checks.some((x) => x.state === 'UNAVAILABLE') ? 'UNVERIFIED' : 'BLOCKED' };
+      checks.some((x) => x.state === 'UNAVAILABLE') ? 'INCONCLUSIVE' : 'BLOCKED' };
 }
 
-export function challengeVerdict({ manualDisconnected, before, after, inferenceSucceeded, localServerReached, warmupCompleted, onlineObservation }) {
-  if (!localServerReached || !inferenceSucceeded) return 'FAIL';
-  if (before.status === 'REACHABLE' || after.status === 'REACHABLE') return 'FAIL';
-  if (warmupCompleted === false || (onlineObservation && onlineObservation.status !== 'REACHABLE')) return 'INCONCLUSIVE';
-  if (!manualDisconnected || before.status !== 'BLOCKED' || after.status !== 'BLOCKED') return 'INCONCLUSIVE';
-  return 'PASS';
+export function explainChallenge(input) {
+  const { manualDisconnected, before, after, inferenceSucceeded, localServerReached, warmupCompleted, onlineObservation } = input;
+  if (!localServerReached || !inferenceSucceeded) return { verdict: 'FAIL', reason: 'Local server or fresh QVAC inference did not complete.' };
+  if (before.status === 'REACHABLE' || after.status === 'REACHABLE') return { verdict: 'FAIL', reason: 'At least one external route was reachable during verification.' };
+  if (!manualDisconnected) return { verdict: 'INCONCLUSIVE', reason: 'Manual disconnection was not acknowledged.' };
+  if (warmupCompleted === false) return { verdict: 'INCONCLUSIVE', reason: 'Genuine warm-up inference was not confirmed.' };
+  if (!onlineObservation || onlineObservation.status !== 'REACHABLE') return { verdict: 'INCONCLUSIVE', reason: 'A reachable external route was not observed before disconnection.' };
+  if (before.status !== 'BLOCKED' || after.status !== 'BLOCKED') return { verdict: 'INCONCLUSIVE', reason: 'One or more probe outcomes were unavailable or ambiguous.' };
+  return { verdict: 'PASS', reason: 'Warm-up and fresh QVAC inference completed; selected external routes were reachable before, then blocked during verification.' };
 }
+
+export function challengeVerdict(input) { return explainChallenge(input).verdict; }

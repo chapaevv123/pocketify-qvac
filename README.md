@@ -1,137 +1,69 @@
-# POCKETIFY / STUDIO
+# Pocketify Studio
 
-## Interactive release
+**Turn off the internet. Keep the intelligence.** Pocketify scans a supported OpenAI-compatible ticket workflow, migrates its configuration safely, and runs fresh local inference through the official QVAC SDK. Its public site offers a real browser scanner and migration lab, recorded QVAC evidence, and browser network observations. Public playback is never presented as live model inference.
 
-Pocketify moves a **supported** AI ticket workflow from a cloud API configuration to local QVAC inference. The public Render Static Site runs the source scanner, an isolated in-memory configuration migration with backup/reset/diff/report export, a recorded QVAC evidence explorer, and browser network diagnostics. These are labeled **LIVE IN BROWSER** or **RECORDED REAL QVAC**. Fresh inference and the offline challenge are **LIVE LOCAL QVAC** at `http://127.0.0.1:4317`.
+[![Pocketify Studio public demo](site/media/pocketify-demo-poster.webp)](https://pocketify-qvac.onrender.com/#watch)
 
-Existing public site: https://pocketify-qvac.onrender.com/ (the new release must be checked after Render finishes deploying). Source: https://github.com/chapaevv123/pocketify-qvac. To reproduce locally on Windows, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`; run `node .\qvac-gate.mjs` once online to cache the model. The local challenge now checks the cache, performs real warm-up inference, asks for physical disconnection, samples DNS/TCP/HTTPS/ICMP before and after another inference, and downloads a receipt containing input, output, timing and limitations. A PASS still needs owner verification with the network physically disconnected.
+**[Watch the 101-second film](https://pocketify-qvac.onrender.com/#watch)** · **[Try the public lab](https://pocketify-qvac.onrender.com/)** · **[Offline instructions](https://pocketify-qvac.onrender.com/offline.html)** · **[Evidence and receipts](https://pocketify-qvac.onrender.com/evidence.html)**
 
-Official QVAC SDK 0.22 documentation lists Node.js, Bare and Expo runtimes; its installed client uses `node:` modules and a Bare worker. Browser-only static inference is therefore not supported by the current integration. See [QVAC JS/TS SDK](https://docs.qvac.tether.io/sdk/js-ts-sdk/). No model weights are published in `site/`.
+## What judges can try
 
-**Turn off the internet. Keep the intelligence.**
-
-Move a supported AI workflow from cloud dependency to local QVAC inference — then prove it works offline. Pocketify Studio is a local developer instrument for real ticket triage, a conservative offline challenge, a controlled migration demo, and evidence-backed benchmarks. Built for **AI Yako: Own Your AI / Cloud to Pocket**.
-
-![Actual Pocketify Studio Local capture](site/studio-desktop.png)
-
-![Actual QVAC Ticket Triage output in Studio](site/studio-live-lab.png)
-
-## Launch Studio
-
-From Windows PowerShell in this repository:
-
-```powershell
-.\scripts\start-studio.ps1
-```
-
-Open **http://127.0.0.1:4317**. The launcher installs project-local packages only if missing, creates local QVAC config if needed, builds static evidence data, and starts the loopback-only server. Cache the model once while connected with `node .\qvac-gate.mjs`; the launcher does not download model weights automatically. If PowerShell blocks local scripts, use `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`. `npm.cmd run studio` starts the server directly after setup.
-
-The same `site/` files form a **Render Static Site** after deployment. The public page runs browser scanning, migration and network observations, and lets visitors inspect recorded QVAC outputs. It does not claim live QVAC inference. Verify the release on the existing Render URL above before showing it to judges.
-
-## Render Static Site
-
-The root [render.yaml](render.yaml) describes the deployment. In Render, choose **New → Static Site**, connect `chapaevv123/pocketify-qvac`, select `main`, leave Root Directory blank, set Build Command to `node scripts/build-showcase.mjs`, and Publish Directory to `site`. Set the build environment variable `SKIP_INSTALL_DEPS=true`. Then click **Create Static Site**. No paid instance, API key, model download or QVAC package installation is needed on Render. Render builds only the static showcase from committed evaluation data. No SPA fallback or web server is required.
-
-The local Windows Studio remains the only surface that performs new QVAC inference and the Offline Challenge. The public site links to its launch instructions and labels every sample output as a **recorded** local result with its source run and expected category. The owner-run disconnected inference is reported, but a complete public offline PASS receipt and video are pending. Cloud baseline remains **NOT MEASURED**.
-
-### Five-minute judge path
-
-1. Click **Explore the Demo**, select a sample ticket, and click **Analyze Locally** in Local Studio. The output, model ID and measured inference time come from the official QVAC SDK. On Render, selecting a sample shows only its labeled recorded result.
-2. Click **Start Offline Challenge** while connected to load the cached model. Manually disconnect Wi-Fi in Windows or unplug Ethernet, leaving `localhost` open. Check the manual-disconnect box, then click **Verify & Infer**. Studio checks local reachability, DNS, TCP, HTTPS and ICMP before/after real inference and generates a downloadable JSON receipt. Reconnect manually afterward.
-3. Click **See the Migration**, run the scanner, apply the supported config migration, inspect the generated backup and changed config, then reset the dedicated demo workspace.
-4. Inspect the actual ten-ticket evaluation, outcome matrix, per-ticket latency, run variability and explicit **CLOUD BASELINE NOT MEASURED** label. Use **Run Fresh Evaluation** for a new real run.
-
-The prior owner-run physical offline inference is reported, but its saved log lacks a simultaneous network record. The new challenge requires all tested external routes to fail before and after inference; its receipt is evidence of those checks, not cryptographic proof of total isolation. In the Codex sandbox, ICMP reached `1.1.1.1` during a genuine challenge run, so Studio correctly recorded `FAIL`. A final physically disconnected receipt and video remain owner actions.
-
-Studio uses `127.0.0.1`, fixed routes, an 8 KiB request cap, same-origin POST checks, a dedicated ignored migration workspace, and no arbitrary shell or filesystem API. The local QVAC backend and original CLI are shared; there is no second inference engine. See [architecture](docs/ARCHITECTURE.md) and [security](docs/SECURITY.md).
-
-## Pocketify CLI — move a ticket AI workflow from cloud to your device
-
-**Cloud to Pocket track · AI Yako: Own Your AI**
-
-Pocketify finds a supported OpenAI compatible JavaScript integration, changes the bundled Ticket Triage example to use the official QVAC SDK, then measures local classification accuracy and latency on an independently labeled dataset. Its core inference works from cached model weights without an internet connection. No paid API is used.
-
-## Evidence at a glance
-
-On Windows 10 Pro, RTX 3070, Node 22.23.1, `@qvac/sdk` 0.22.0 and `@qvac/cli` 0.17.0, QVAC Doctor passed. The official catalog model `QWEN3_600M_INST_Q4` (Unsloth Qwen3-0.6B Q4_0 GGUF, 382,156,480 bytes) generated real output. Original ten-ticket evaluations scored **8/10, 6/10 and 6/10**, with **150, 158 and 161.5 ms median** inference latency. A generic prompt revision then scored **6/10 and 5/10** and was reverted; both full reports are committed. The first generation in each run includes warm-up. Rerun `node pocketify.mjs eval` for fresh results. Cloud quality and speed are **NOT MEASURED**.
-
-The owner-run offline log shows the cached model loaded and produced output, but no adapter or connectivity log was saved with it. An early Codex evaluation passed a TCP-only probe, but a later ping to the same public IP succeeded; that early run is **not** proof of full disconnection. The current offline workflow rejects reachable TCP or ICMP and should be recorded after manually disconnecting the machine.
-
-## Quickstart (Windows PowerShell)
-
-```powershell
-Set-Location C:\path\to\pocketify-qvac
-.\scripts\setup.ps1
-$env:QVAC_CONFIG_PATH = (Resolve-Path .\qvac.config.json).Path
-node .\qvac-gate.mjs          # once online, downloads and validates the model
-node .\pocketify.mjs scan .\examples\ticket-triage
-node .\pocketify.mjs migrate .\examples\ticket-triage
-node .\pocketify.mjs triage 'The CSV export crashes when I click Download.'
-node .\pocketify.mjs eval
-Start-Process .\reports\latest.html
-```
-
-`setup.ps1` skips installation when QVAC is already present. A fresh clone uses `npm.cmd ci` locally. Model weights are downloaded by QVAC and remain outside Git. If PowerShell script execution is restricted, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1`; this affects that process only.
-The script creates a machine-local `qvac.config.json` from `qvac.config.template.json`, with an absolute cache path inside the project.
-
-## Offline judge demo
-
-1. Complete the online quickstart once and confirm the model appears in `.qvac/models`.
-2. Disconnect internet manually using the Windows UI. Do not disable the adapter by script.
-3. Run `.\scripts\demo-offline.cmd` in the project directory. It checks outbound TCP and ICMP, scans, migrates, classifies a ticket, evaluates ten labeled tickets, and opens `reports/latest.html`.
-4. Capture the adapter state and the report in the demo video. Restore connectivity manually afterward.
-
-The script refuses to call the run offline if either probe succeeds. Failed probes alone remain limited evidence; show the actual Windows disconnected state as well. The cached SDK model is checked and used locally. No cloud AI endpoint is called by this workflow.
-
-## CLI
-
-| Command | Action |
+| Surface | What actually runs |
 | --- | --- |
-| `node pocketify.mjs scan [directory]` | List supported JS/TS integration patterns and locations. |
-| `node pocketify.mjs migrate [directory]` | Back up and switch the bundled example config to QVAC; safe to rerun. |
-| `node pocketify.mjs triage "ticket"` | Run real local QVAC classification and summary. |
-| `node pocketify.mjs eval [--offline]` | Evaluate ten independent labels and write JSON and HTML reports. |
-| `npm.cmd test` | Pure unit tests. |
-| `npm.cmd run test:integration` | Test with the real cached QVAC model. |
-| `npm.cmd run test:studio` | Studio API, challenge verdict and migration safety tests. |
-| `npm.cmd run test:studio:integration` | Real QVAC inference and challenge receipt via Studio API. |
-| `npm.cmd run build:showcase` | Rebuild public static data from committed evaluation evidence. |
+| Public Render Static Site | Scanner over bundled source, supported configuration migration in memory with backup/diff/reset, recorded QVAC results, same-origin browser network checks |
+| Local Studio at `127.0.0.1:4317` | Fresh QVAC inference, model warm-up, selected external probes, offline challenge and JSON receipt |
 
-The supported migration contract is a JS/TS repository with `new OpenAICompatClient(config)` and a root `pocketify.json` matching the bundled example. The scanner also identifies common `openai` imports, constructors, chat completions, and Responses API calls **for review only**. Pocketify does not rewrite arbitrary source files or promise automatic migration of unrelated repositories. It writes a backup before changing the supported config and rejects unknown configurations.
-The example includes a cloud HTTPS transport for the original workflow, but it is disabled unless a user explicitly sets `POCKETIFY_ALLOW_CLOUD=1` and provides `OPENAI_API_KEY`. No such call was made for this project. The hackathon demo uses the migrated QVAC path and needs no key or paid service.
+The migration edits only a validated `pocketify.json` in the local demo workspace or a browser memory copy. It does not rewrite arbitrary applications. The public site needs no model download or paid API.
 
-## How QVAC is used
+## Reproduce locally on Windows
 
-`src/qvac-client.mjs` imports `loadModel`, `completion`, `unloadModel`, and `QWEN3_600M_INST_Q4` from `@qvac/sdk`. It adapts the request and response to the familiar `client.chat.completions.create(...)` shape. `src/triage.mjs` uses a constrained JSON schema to ask the QVAC model for category and summary. The model executes locally via QVAC's Bare worker and llama.cpp plugin. `kvCache: false` avoids a QVAC profile cache dependency in restricted environments. `qvac.config.json` pins the project model cache and also exposes an optional QVAC OpenAI-compatible server configuration. The MVP app uses the direct SDK path; no other inference engine is substituted.
-
-## Evaluation and privacy
-
-`data/golden-tickets.json` defines ten synthetic tickets with expected categories before inference. `src/evaluation.mjs` records every prediction, summary, latency, model identity, SDK version, host free RAM snapshots, client RSS, and outbound probe result. Host free RAM is system-wide and client RSS excludes the worker, so neither is reported as exact QVAC memory consumption. The report marks cloud performance **NOT MEASURED**. Ticket content is handled in the local process and QVAC worker; use synthetic data for demos.
-
-## Requirements, licenses, limits
-
-- Windows 10+ x64 with Vulkan >=1.4 even for CPU inference; Node >=22.17 and npm >=10.9. This machine uses Windows 10 Pro, RTX 3070 with Vulkan 1.4.351, and 32 GB RAM. See [QVAC requirements](https://docs.qvac.tether.io/sdk/system-requirements/).
-- QVAC packages are project local: `@qvac/sdk` 0.22.0 and `@qvac/cli` 0.17.0, both Apache-2.0 according to their installed package metadata. See [official JS/TS SDK](https://docs.qvac.tether.io/sdk/js-ts-sdk/).
-- Model: [Unsloth Qwen3-0.6B-GGUF](https://huggingface.co/unsloth/Qwen3-0.6B-GGUF), Apache-2.0. Exact catalog SHA-256 is recorded in the report. The model is not redistributed in this repository.
-- QVAC's OpenAI-compatible HTTP server is documented [here](https://docs.qvac.tether.io/cli/http-server/). In this Codex sandbox, its `/v1/chat/completions` route returned 500 because QVAC attempted to write a KV cache under the protected user profile. The direct SDK workflow succeeds with KV cache disabled. Normal PowerShell may permit the server, but that route is not required for this MVP.
-- A 0.6B model can misclassify tickets and produce imperfect summaries. Original-prompt runs scored 8/10, 6/10 and 6/10. A generic prompt clarification scored 6/10 and 5/10 on two genuine runs, so it was reverted. All five runs are in `reports/` and the public evidence explorer. No cloud comparison is claimed.
-- Setup and model download require connectivity. Offline inference needs cached weights and installed dependencies. A failed TCP probe is supporting evidence, not a complete network audit.
-
-See [architecture](docs/ARCHITECTURE.md), [security and limitations](docs/SECURITY.md), [measured evidence](docs/EVIDENCE.md), and [submission materials](docs/SUBMISSION.md). Work created for this event: scanner, migration, Ticket Triage app, dataset, evaluator, report, tests, and docs. QVAC and model weights are third-party dependencies credited above.
-
-## Publishing the Studio update
-
-The existing repository is [chapaevv123/pocketify-qvac](https://github.com/chapaevv123/pocketify-qvac). Review and publish this Render update from ordinary PowerShell if `gh auth status` is valid. Render deploys new commits to `main` after the static site has been created.
+Use Node.js 22+ and a regular PowerShell window. Run the gate once while online to cache the official model:
 
 ```powershell
-Set-Location C:\Users\Win10_Game_OS\Projects\Pocketify
-gh auth status
-# If authentication is invalid: gh auth login -h github.com
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify status --short
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify add -A -- render.yaml README.md docs site .github scripts/verify-showcase.mjs
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify diff --cached --check
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify commit -m "Deploy Pocketify Studio showcase on Render"
-git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify push origin main
+git clone https://github.com/chapaevv123/pocketify-qvac.git
+Set-Location .\pocketify-qvac
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1
+node .\qvac-gate.mjs
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1
 ```
 
-Confirm with `git -c safe.directory=C:/Users/Win10_Game_OS/Projects/Pocketify ls-files` that `.qvac/`, `node_modules/`, `evidence/`, `.env`, and model weights are absent. The per-command `safe.directory` override changes no global Git configuration. Do not submit the DoraHacks Build until the owner reviews the public site, captures a playable offline demo video, and approves submission.
+Open **http://127.0.0.1:4317**. Click **Start Offline Challenge** while connected: the Studio checks the cache, samples external routes and runs genuine warm-up inference. Then disconnect Wi-Fi or Ethernet manually in Windows, keep localhost open, check the acknowledgement, and click **Verify & Infer**. Download the JSON receipt and restore connectivity manually. [Full field guide](docs/OFFLINE_AUDIT.md).
+
+No administrator rights, firewall changes or adapter scripts are required. A PASS would mean the defined selected routes were reachable before and blocked during fresh inference; it cannot prove every possible network path was isolated.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  A[Supported ticket workflow] --> B[Scanner and validated config migration]
+  B --> C[OpenAI-compatible client shape]
+  C --> D[Official @qvac/sdk 0.22.0]
+  D --> E[Local Bare worker and cached QWEN3_600M_INST_Q4]
+  E --> F[Classification and summary]
+```
+
+`src/qvac-client.mjs` imports `loadModel`, `completion` and `unloadModel` from the official SDK. The cached runtime model ID is `bc5c55956168a616`. Browser-only static QVAC inference is not supported by the installed SDK's Node/Bare worker path. Model weights and private config stay outside Git and Render.
+
+## Measured results
+
+The ten-ticket synthetic evaluation has fixed ground truth. Original-prompt runs scored **8/10, 6/10, 6/10** with median inference **150, 158, 161.5 ms**. A generic prompt clarification scored **6/10 and 5/10** with medians **152.5 and 138 ms**, so it was reverted. All five full JSON runs remain available on the [evidence page](https://pocketify-qvac.onrender.com/evidence.html) and in `reports/`. First inference includes model warm-up; these medians do not measure page latency. A cloud baseline was **not measured**.
+
+Two historical challenge receipts show real QVAC inference while selected external checks failed, but their verdict is **INCONCLUSIVE**. DNS returned `UNAVAILABLE / ECONNREFUSED`, no reachable external route was observed before disconnection, and the supplied recording does not show Windows adapter state. The [offline audit](docs/OFFLINE_AUDIT.md) explains the exact decision.
+
+## Verify and inspect
+
+```powershell
+npm.cmd test
+npm.cmd run test:studio
+npm.cmd run test:integration
+npm.cmd run test:studio:integration
+npm.cmd run build:showcase
+```
+
+The interactive static site is built by `node scripts/build-showcase.mjs` and published from `site/` on Render. The edited 101-second video is reproducible with `node scripts/montage-demo.mjs` when FFmpeg and the original private recordings are available; [source timestamps](site/media/source-manifest.json) are public. Raw recordings are ignored by Git. The final captioned MP4 is 5.8 MB and is published as a static asset for direct playback.
+
+More detail: [evidence](docs/EVIDENCE.md), [offline verification](docs/OFFLINE_AUDIT.md), [architecture](docs/ARCHITECTURE.md), [security](docs/SECURITY.md), [submission text](docs/SUBMISSION.md), [video notes](docs/VIDEO_DEMO.md).
+
+Known limitations: the 0.6B model misclassifies some tickets; the public page cannot run the QVAC worker; selected probe failures do not prove physical disconnection; no cloud comparison was measured. These limits are shown in the product and source data.
+
+MIT licensed. QVAC SDK, QVAC CLI and model weights are third-party components with their own licenses; they are not bundled into the static site.

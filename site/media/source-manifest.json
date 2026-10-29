@@ -1,0 +1,99 @@
+{
+  "durationSeconds": 101,
+  "resolution": "1920x1080",
+  "frameRate": 30,
+  "playbackSpeed": 1,
+  "sourceFiles": [
+    "01-local-qvac.mp4",
+    "02-public-render.mp4",
+    "03-offline-challenge.mp4"
+  ],
+  "scenes": [
+    {
+      "file": "02-public-render.mp4",
+      "start": 0,
+      "end": 8,
+      "title": "POCKETIFY STUDIO",
+      "caption": "Turn off the internet  Keep the intelligence",
+      "claim": "Public homepage and product framing",
+      "montageStart": 0,
+      "montageEnd": 8
+    },
+    {
+      "file": "02-public-render.mp4",
+      "start": 8,
+      "end": 19,
+      "title": "PUBLIC MODE",
+      "caption": "Inspect recorded real QVAC outputs  No fresh model call",
+      "claim": "Recorded ticket playback on Render",
+      "montageStart": 8,
+      "montageEnd": 19
+    },
+    {
+      "file": "02-public-render.mp4",
+      "start": 24,
+      "end": 38,
+      "title": "LIVE IN BROWSER",
+      "caption": "Scan the bundled source and migrate an isolated config",
+      "claim": "Public browser migration and diff",
+      "montageStart": 19,
+      "montageEnd": 33
+    },
+    {
+      "file": "01-local-qvac.mp4",
+      "start": 0,
+      "end": 22,
+      "title": "LIVE LOCAL QVAC",
+      "caption": "Fresh support ticket inference on the cached model",
+      "claim": "Visible local inference with genuine output",
+      "montageStart": 33,
+      "montageEnd": 55
+    },
+    {
+      "file": "03-offline-challenge.mp4",
+      "start": 4,
+      "end": 21,
+      "title": "OFFLINE CHALLENGE",
+      "caption": "Selected routes failed  Verdict INCONCLUSIVE",
+      "claim": "Challenge UI and inconclusive verdict; physical adapter state not shown",
+      "montageStart": 55,
+      "montageEnd": 72
+    },
+    {
+      "file": "02-public-render.mp4",
+      "start": 45,
+      "end": 60,
+      "title": "MEASURED EVIDENCE",
+      "caption": "Five genuine ten-ticket runs  5 to 8 correct",
+      "claim": "Benchmark and evidence sections",
+      "montageStart": 72,
+      "montageEnd": 87
+    },
+    {
+      "file": "02-public-render.mp4",
+      "start": 63,
+      "end": 71,
+      "title": "OPEN SOURCE",
+      "caption": "Inspect the repository and reproduce the local run",
+      "claim": "GitHub repository visible",
+      "montageStart": 87,
+      "montageEnd": 95
+    },
+    {
+      "file": "02-public-render.mp4",
+      "start": 108,
+      "end": 114,
+      "title": "POCKETIFY STUDIO",
+      "caption": "Public lab  Local QVAC  Honest evidence",
+      "claim": "Public homepage outro",
+      "montageStart": 95,
+      "montageEnd": 101
+    }
+  ],
+  "limitations": [
+    "No Windows network adapter state appears in the supplied footage.",
+    "The visible offline challenge verdict is INCONCLUSIVE.",
+    "Source audio is near silent; final video uses captioned visuals without music.",
+    "Benchmark footage shows a historical experimental 5/10 run; all five runs are preserved."
+  ]
+}

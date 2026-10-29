@@ -1,5 +1,11 @@
 # Measured evidence summary
 
+## Final film and local challenge audit
+
+The [101-second film](../site/media/pocketify-demo-1080p.mp4) uses authentic owner recordings at original playback speed. Its [source manifest](../site/media/source-manifest.json) lists exact timestamps. The visible local challenge ends **INCONCLUSIVE**; the film contains no independent Windows adapter-state shot.
+
+Two raw local receipts, `38baaf0f-f070-4e61-bf1a-5c55b8a5199c` and `63ac8842-8be4-48fa-952e-39bbb728a002`, record genuine fresh inference at 242 ms and 223 ms. Both have DNS `UNAVAILABLE / ECONNREFUSED`; TCP `BLOCKED / ENETUNREACH`; HTTPS `BLOCKED / ENOTFOUND` under the earlier classifier; and ICMP `BLOCKED / exit 1`. Both baseline and before/after aggregate status were UNVERIFIED under the earlier code; final verdict was INCONCLUSIVE. The current classifier treats HTTPS name-resolution failure as UNAVAILABLE too, making the reason clearer, without changing historical receipts. No reachable external route was observed before disconnection. [Sanitized downloadable receipts](../site/evidence/receipts.json) and [decision audit](OFFLINE_AUDIT.md) provide detail.
+
 ## Interactive release provenance
 
 The browser scanner reads the bundled `app.mjs` source from build data and applies the same detection rules imported by the CLI scanner. Browser migration executes a validated configuration transform in memory, with preserved original backup; no visitor file or Git repository is written. Public QVAC ticket records are exact rows from committed evaluation JSON. Browser network checks only measure same-origin fetches, browser events and timings; caches or service workers may satisfy requests. Neither these checks nor Node's selected external probes establish absolute internet isolation.

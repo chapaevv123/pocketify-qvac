@@ -5,13 +5,15 @@
   "type": "module",
   "bin": { "pocketify": "./pocketify.mjs" },
   "scripts": {
-    "test": "node --test tests/unit.test.mjs tests/browser-lab.test.mjs",
+    "test": "node --test tests/unit.test.mjs tests/browser-lab.test.mjs tests/release.test.mjs",
     "test:integration": "node --test tests/qvac.integration.test.mjs",
     "scan": "node pocketify.mjs scan examples/ticket-triage",
     "triage": "node pocketify.mjs triage",
     "eval": "node pocketify.mjs eval",
     "studio": "node studio/server.mjs",
     "build:showcase": "node scripts/build-showcase.mjs",
+    "build:video": "node scripts/montage-demo.mjs",
+    "sanitize:evidence": "node scripts/sanitize-evidence.mjs",
     "test:studio": "node --test tests/studio.test.mjs",
     "test:studio:integration": "node --test --test-force-exit tests/studio.integration.test.mjs"
   },

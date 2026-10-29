@@ -1,14 +1,18 @@
-# Pocketify Studio: 90–120 second recording
+# Final demo film
 
-Use `https://pocketify-qvac.onrender.com/` for scenes 1–4 and 6 after the new Render deployment is verified, and the local Studio at `http://127.0.0.1:4317` for scene 5. A physical-disconnect PASS is still pending owner verification. Do not narrate PASS unless the downloaded receipt says PASS.
+The edited [101-second MP4](../site/media/pocketify-demo-1080p.mp4) is 1920×1080 H.264 at 30 fps. The [preview](../site/media/pocketify-demo-preview.mp4), [poster](../site/media/pocketify-demo-poster.webp), [captions](../site/media/pocketify-demo-captions.vtt), [offline highlight](../site/media/pocketify-offline-highlight.webp) and [migration highlight](../site/media/pocketify-migration-highlight.webp) are published with the Static Site.
 
-| Time | Screen and narration |
-| --- | --- |
-| 0–12 s | Hero. “Pocketify moves a supported cloud AI ticket workflow to local QVAC.” Show the four entry points. |
-| 12–30 s | Run Scanner. Point to actual file, line and call-site excerpt. |
-| 30–48 s | Apply Safe Migration. Show before/after config, exact diff and preserved backup. Reset if desired. |
-| 48–66 s | Select two recorded QVAC tickets, including a mismatch. Show original input, observed output, expected label and latency. Say “recorded, not fresh inference.” |
-| 66–96 s | Open local Studio. Run fresh inference, Prepare (cache check and warm-up), physically disconnect Wi-Fi/Ethernet with Windows controls, Verify & Infer, download receipt. Show actual verdict; if FAIL/INCONCLUSIVE, state it plainly. |
-| 96–115 s | Show original 8/10, 6/10, 6/10 and reverted experimental 6/10, 5/10 runs, source repository and reproducibility instructions. |
+The [machine-readable source manifest](../site/media/source-manifest.json) records exact source in/out and final timeline positions. Rebuild with `node scripts/montage-demo.mjs` after placing the three original recordings under ignored `media/raw/` and installing FFmpeg. The script does not alter originals or playback speed and adds no music.
 
-Before recording: run `node .\qvac-gate.mjs` while online if weights are not cached, then `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`. Keep localhost open during disconnection. Reconnect manually afterward. The public browser diagnostics are an additional interactive scene, not evidence of physical disconnection.
+| Final time | Actual footage | On-screen claim |
+| --- | --- | --- |
+| 00:00–00:08 | Public homepage | Product name and promise |
+| 00:08–00:19 | Public recorded ticket playback | Historical QVAC output; not fresh inference |
+| 00:19–00:33 | Browser scanner and migration | Bundled-source scan and isolated config change |
+| 00:33–00:55 | Local Studio | Fresh QVAC inference and resulting category |
+| 00:55–01:12 | Local Offline Challenge | Selected routes fail; visible verdict INCONCLUSIVE |
+| 01:12–01:27 | Public benchmarks and evidence | Five full ten-ticket runs, including regressions |
+| 01:27–01:35 | GitHub repository | Source and reproduction path |
+| 01:35–01:41 | Public homepage | Branded outro |
+
+The offline source clip contains the owner's acknowledgement and the challenge result, but does not show the Windows adapter state. The video caption does not claim physical disconnection was independently established. Two historical receipts remain INCONCLUSIVE. For a future stronger claim, record the Windows network state before and after the manual disconnect while running a new local challenge and publish its actual receipt.

@@ -65,6 +65,20 @@ try {
   if (layout.scrollWidth > layout.width + 1) throw new Error(`Horizontal overflow: ${JSON.stringify(layout)}`);
   const shot = await command('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
   await writeFile('evidence/render-showcase-mobile.png', Buffer.from(shot.data, 'base64'));
+  await command('Page.navigate', { url: 'http://127.0.0.2:4320/offline.html' });
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const offlinePage = await evaluate('({title:document.title,steps:document.querySelectorAll(".step-card").length,copy:document.querySelectorAll("[data-copy]").length,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})');
+  if (offlinePage.steps !== 10 || offlinePage.copy < 4 || offlinePage.scrollWidth > offlinePage.width + 1) throw new Error(`Offline guide failed: ${JSON.stringify(offlinePage)}`);
+  await command('Page.navigate', { url: 'http://127.0.0.2:4320/evidence.html' });
+  await new Promise((resolve) => setTimeout(resolve, 750));
+  const evidencePage = await evaluate('({runs:document.querySelectorAll("#run-cards article").length,receipts:document.querySelectorAll("#receipt-cards article").length,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})');
+  if (evidencePage.runs !== 5 || evidencePage.receipts !== 2 || evidencePage.scrollWidth > evidencePage.width + 1) throw new Error(`Evidence page failed: ${JSON.stringify(evidencePage)}`);
+  await command('Page.navigate', { url: 'http://127.0.0.2:4320/' });
+  await new Promise((resolve) => setTimeout(resolve, 650));
+  await evaluate('document.querySelector("#watch video").muted=true; document.querySelector("#watch video").play().catch(()=>{}); true');
+  await new Promise((resolve) => setTimeout(resolve, 850));
+  const video = await evaluate('({ready:document.querySelector("#watch video").readyState,time:document.querySelector("#watch video").currentTime,error:document.querySelector("#watch video").error?.message||null})');
+  if (video.ready < 2 || video.error || video.time <= 0) throw new Error(`Video playback failed: ${JSON.stringify(video)}`);
   if (errors.length) throw new Error(`Browser console errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
+  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, offlinePage, evidencePage, video, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
 } finally { socket.close(); }

@@ -2,7 +2,7 @@
   "generatedAt": "2026-10-29T07:11:27.836Z",
   "mode": "PUBLIC_SHOWCASE",
   "repository": "https://github.com/chapaevv123/pocketify-qvac",
-  "videoUrl": null,
+  "videoUrl": "./media/pocketify-demo-1080p.mp4",
   "model": "QWEN3_600M_INST_Q4",
   "sdkVersion": "0.22.0",
   "seedConfig": {
@@ -759,6 +759,13 @@
         }
       ]
     }
+  ],
+  "runFiles": [
+    "sample-2026-10-29.json",
+    "sample-release-2026-10-29.json",
+    "sample-current-2026-10-29.json",
+    "prompt-refined-run-1.json",
+    "prompt-refined-run-2.json"
   ],
   "notes": {
     "cloudBaseline": "NOT MEASURED",

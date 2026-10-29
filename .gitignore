@@ -4,7 +4,7 @@ node_modules/
 examples/studio-workspace/
 qvac.config.json
 .npm-cache/
-evidence/
+/evidence/
 reports/latest.json
 reports/latest.html
 *.cloud.backup
@@ -15,3 +15,7 @@ dxdiag.txt
 *.log
 PREFLIGHT.md
 RUN-IN-NORMAL-POWERSHELL.md
+media/raw/
+media/work/
+media/final/
+.chrome-qa/

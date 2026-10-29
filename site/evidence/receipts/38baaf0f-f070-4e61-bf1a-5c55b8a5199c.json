@@ -1,0 +1,129 @@
+{
+  "id": "38baaf0f-f070-4e61-bf1a-5c55b8a5199c",
+  "at": "2026-10-29T07:56:03.200Z",
+  "originalVerdict": "INCONCLUSIVE",
+  "verdict": "INCONCLUSIVE",
+  "manualDisconnectedAcknowledged": true,
+  "localServerReached": true,
+  "sdkVersion": "0.22.0",
+  "model": "QWEN3_600M_INST_Q4",
+  "modelId": "bc5c55956168a616",
+  "warmup": {
+    "completed": true,
+    "at": "2026-10-29T07:55:59.153Z",
+    "durationMs": 219,
+    "onlineObservation": {
+      "at": "2026-10-29T07:55:58.934Z",
+      "checks": [
+        {
+          "name": "DNS",
+          "target": "example.com A via 1.1.1.1",
+          "state": "UNAVAILABLE",
+          "detail": "ECONNREFUSED",
+          "durationMs": 3
+        },
+        {
+          "name": "TCP",
+          "target": "1.1.1.1:443",
+          "state": "BLOCKED",
+          "detail": "ENETUNREACH",
+          "durationMs": 3
+        },
+        {
+          "name": "HTTPS",
+          "target": "https://example.com",
+          "state": "BLOCKED",
+          "detail": "ENOTFOUND",
+          "durationMs": 3
+        },
+        {
+          "name": "ICMP",
+          "target": "1.1.1.1",
+          "state": "BLOCKED",
+          "detail": "exit 1",
+          "durationMs": 17
+        }
+      ],
+      "status": "UNVERIFIED"
+    }
+  },
+  "externalBefore": {
+    "at": "2026-10-29T07:56:02.932Z",
+    "checks": [
+      {
+        "name": "DNS",
+        "target": "example.com A via 1.1.1.1",
+        "state": "UNAVAILABLE",
+        "detail": "ECONNREFUSED",
+        "durationMs": 3
+      },
+      {
+        "name": "TCP",
+        "target": "1.1.1.1:443",
+        "state": "BLOCKED",
+        "detail": "ENETUNREACH",
+        "durationMs": 3
+      },
+      {
+        "name": "HTTPS",
+        "target": "https://example.com",
+        "state": "BLOCKED",
+        "detail": "ENOTFOUND",
+        "durationMs": 3
+      },
+      {
+        "name": "ICMP",
+        "target": "1.1.1.1",
+        "state": "BLOCKED",
+        "detail": "exit 1",
+        "durationMs": 17
+      }
+    ],
+    "status": "UNVERIFIED"
+  },
+  "externalAfter": {
+    "at": "2026-10-29T07:56:03.200Z",
+    "checks": [
+      {
+        "name": "DNS",
+        "target": "example.com A via 1.1.1.1",
+        "state": "UNAVAILABLE",
+        "detail": "ECONNREFUSED",
+        "durationMs": 3
+      },
+      {
+        "name": "TCP",
+        "target": "1.1.1.1:443",
+        "state": "BLOCKED",
+        "detail": "ENETUNREACH",
+        "durationMs": 4
+      },
+      {
+        "name": "HTTPS",
+        "target": "https://example.com",
+        "state": "BLOCKED",
+        "detail": "ENOTFOUND",
+        "durationMs": 4
+      },
+      {
+        "name": "ICMP",
+        "target": "1.1.1.1",
+        "state": "BLOCKED",
+        "detail": "exit 1",
+        "durationMs": 17
+      }
+    ],
+    "status": "UNVERIFIED"
+  },
+  "inference": {
+    "completed": true,
+    "category": "bug",
+    "summary": "The CSV export crashes with an error every time I click 'Download'.",
+    "durationMs": 242
+  },
+  "analysis": "DNS ECONNREFUSED was UNAVAILABLE. No reachable external route was observed before disconnection. Physical adapter state was not independently captured.",
+  "limitations": [
+    "Selected probes do not prove all external routes unavailable.",
+    "Manual disconnection is owner acknowledgement; supplied video does not show Windows adapter state."
+  ]
+}

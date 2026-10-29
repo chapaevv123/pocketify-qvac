@@ -22,7 +22,7 @@ The scanner recognizes common OpenAI SDK syntax for review, but migration is lim
 
 ## Pocketify Studio surfaces
 
-`site/` is one framework-free HTML/CSS/JavaScript interface. `studio/server.mjs` serves those same files on `127.0.0.1:4317` and exposes fixed JSON endpoints. Render publishes `site/` as a Static Site using `scripts/build-showcase.mjs`, which transforms committed evaluation JSON and real source text into `site/data.json`. The Render build skips package installation and never starts QVAC. In public mode the UI disables live actions, lets visitors inspect recorded QVAC ticket results, and says new inference requires local Studio. There is no simulated QVAC response.
+`site/` is a framework-free HTML/CSS/JavaScript interface. `studio/server.mjs` serves those same files on `127.0.0.1:4317` and exposes fixed JSON endpoints. Render publishes `site/` as a Static Site using `scripts/build-showcase.mjs`, which transforms committed evaluation JSON and real source text into `site/data.json`. The Render build skips package installation and never starts QVAC. Public mode runs its source scanner, isolated in-memory config migration, recorded QVAC evidence explorer and browser network checks. Fresh inference requires local Studio. There is no simulated QVAC response. The static site also serves an optimized authentic video and sanitized historical receipts.
 
 ```mermaid
 flowchart LR

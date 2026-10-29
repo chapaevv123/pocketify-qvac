@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { createStudioServer } from '../studio/server.mjs';
-import { challengeVerdict } from '../studio/probes.mjs';
+import { challengeVerdict, explainChallenge, classifyProbeError } from '../studio/probes.mjs';
 
 async function withServer(fn) {
   const server = createStudioServer();
@@ -16,13 +16,22 @@ test('challenge verdict is conservative', () => {
   const reachable = { status: 'REACHABLE' };
   const uncertain = { status: 'UNVERIFIED' };
   const base = { manualDisconnected: true, before: blocked, after: blocked,
-    inferenceSucceeded: true, localServerReached: true };
+    inferenceSucceeded: true, localServerReached: true, warmupCompleted: true, onlineObservation: reachable };
   assert.equal(challengeVerdict(base), 'PASS');
   assert.equal(challengeVerdict({ ...base, before: reachable }), 'FAIL');
   assert.equal(challengeVerdict({ ...base, after: reachable }), 'FAIL');
   assert.equal(challengeVerdict({ ...base, inferenceSucceeded: false }), 'FAIL');
   assert.equal(challengeVerdict({ ...base, after: uncertain }), 'INCONCLUSIVE');
   assert.equal(challengeVerdict({ ...base, manualDisconnected: false }), 'INCONCLUSIVE');
+  assert.equal(explainChallenge({ ...base, onlineObservation: uncertain }).reason, 'A reachable external route was not observed before disconnection.');
+  assert.equal(challengeVerdict({ ...base, onlineObservation: uncertain }), 'INCONCLUSIVE');
+});
+
+test('ambiguous probe failures cannot become offline proof', () => {
+  assert.equal(classifyProbeError({ code: 'ECONNREFUSED' }, 'dns').state, 'UNAVAILABLE');
+  assert.equal(classifyProbeError({ code: 'ECONNREFUSED' }, 'tcp').state, 'REACHABLE');
+  assert.equal(classifyProbeError({ code: 'ENOTFOUND' }, 'https').state, 'UNAVAILABLE');
+  assert.equal(classifyProbeError({ code: 'ENETUNREACH' }, 'tcp').state, 'BLOCKED');
 });
 
 test('Studio serves local assets and actual status without claiming a loaded model', async () => withServer(async (base) => {
@@ -32,13 +41,21 @@ test('Studio serves local assets and actual status without claiming a loaded mod
   const capture = await fetch(`${base}/studio-live-lab.png`);
   assert.equal(capture.status, 200);
   assert.match(capture.headers.get('content-type'), /^image\/png/);
+  const offline = await fetch(`${base}/offline.html`);
+  assert.equal(offline.status, 200);
+  const evidence = await fetch(`${base}/evidence.html`);
+  assert.equal(evidence.status, 200);
+  const video = await fetch(`${base}/media/pocketify-demo-1080p.mp4`, { method: 'GET' });
+  assert.equal(video.status, 200);
+  assert.equal(video.headers.get('content-type'), 'video/mp4');
+  await video.body.cancel();
   const status = await (await fetch(`${base}/api/status`)).json();
   assert.equal(status.model, 'QWEN3_600M_INST_Q4');
   assert.ok(['IDLE', 'LOADED'].includes(status.runtime));
   assert.equal(status.localOnly, true);
   const data = await (await fetch(`${base}/data.json`)).json();
   assert.equal(data.runs.length, 5);
-  assert.equal(data.videoUrl, null);
+  assert.equal(data.videoUrl, './media/pocketify-demo-1080p.mp4');
 }));
 
 test('Studio rejects foreign origins, hosts, oversized and invalid requests', async () => withServer(async (base) => {

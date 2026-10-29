@@ -85,7 +85,7 @@ function renderRecordedSamples() {
 }
 function updateStatus(status) {
   const loaded = status.runtime === 'LOADED';
-  set('mode-badge', loaded ? 'LOCAL / MODEL LOADED' : 'LOCAL / MODEL IDLE');
+  set('mode-badge', loaded ? 'LOCAL MODE / LIVE LOCAL QVAC' : 'LOCAL MODE / MODEL IDLE');
   set('trust-runtime', loaded ? 'MODEL LOADED' : status.cachedFilePresent ? 'CACHED FILE PRESENT' : 'MODEL NOT LOADED');
   set('lab-model', status.model);
   if (!activeRequest) setCore(loaded ? 'LOADED' : 'IDLE');
@@ -142,6 +142,7 @@ function verdictUI(receipt, result) {
       'External connectivity could not be confidently determined.';
   box.append(detail);
   set('receipt-id', receipt.id);
+  set('verdict-reason', receipt.verdictReason || 'See downloaded receipt for full criteria.');
   set('challenge-clock', new Date(receipt.at).toLocaleString());
   $('receipt-download').href = `/api/receipts/${receipt.id}`;
   $('receipt-download').hidden = false;
@@ -288,7 +289,7 @@ async function rerunEvaluation() {
 
 function publicMode() {
   local = false;
-  set('mode-badge', 'LIVE IN BROWSER / RECORDED REAL QVAC');
+  set('mode-badge', 'PUBLIC MODE / LIVE IN BROWSER + RECORDED REAL QVAC');
   set('trust-runtime', 'RUN LOCALLY TO VERIFY');
   set('lab-execution', 'RECORDED / NOT LIVE'); setCore('IDLE');
   set('lab-intro', 'Explore genuine outputs saved by a previous local QVAC evaluation. Choose a ticket to inspect the recorded classification, summary and timing. New inference requires the local Studio.');
@@ -331,6 +332,9 @@ async function init() {
   set('network-state', navigator.onLine ? 'BROWSER REPORTS ONLINE' : 'BROWSER REPORTS OFFLINE');
   try { staticData = await (await fetch('./data.json', { cache: 'no-store' })).json(); }
   catch { staticData = { runs: [], source: '', seedConfig: {}, findings: [] }; }
+  $('video-link').hidden = false;
+  $('video-link').href = '#watch';
+  set('video-state', '101-SECOND FILM AVAILABLE');
   browserWorkspace = makeWorkspace(staticData.source, staticData.seedConfig);
   const possibleLocal = ['127.0.0.1', 'localhost'].includes(location.hostname);
   if (possibleLocal) {
@@ -355,7 +359,6 @@ async function init() {
   } else {
     showMigration(browserWorkspace.state);
     renderBenchmarks(staticData.runs);
-    if (staticData.videoUrl) { $('video-link').href = staticData.videoUrl; $('video-link').hidden = false; set('video-state', 'AVAILABLE'); }
   }
 }
 

@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "id": "38baaf0f-f070-4e61-bf1a-5c55b8a5199c",
+      "at": "2026-10-29T07:56:03.200Z",
+      "verdict": "INCONCLUSIVE",
+      "inferenceMs": 242,
+      "beforeStatus": "UNVERIFIED",
+      "afterStatus": "UNVERIFIED",
+      "url": "./evidence/receipts/38baaf0f-f070-4e61-bf1a-5c55b8a5199c.json"
+    },
+    {
+      "id": "63ac8842-8be4-48fa-952e-39bbb728a002",
+      "at": "2026-10-29T07:56:39.967Z",
+      "verdict": "INCONCLUSIVE",
+      "inferenceMs": 223,
+      "beforeStatus": "UNVERIFIED",
+      "afterStatus": "UNVERIFIED",
+      "url": "./evidence/receipts/63ac8842-8be4-48fa-952e-39bbb728a002.json"
+    }
+  ]
+}
