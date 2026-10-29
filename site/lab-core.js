@@ -53,6 +53,22 @@ export function diagnosticVerdict(checks) {
   return 'REQUESTS FAILED / ISOLATION UNPROVEN';
 }
 
+export function diffJson(before, after) {
+  const left = JSON.stringify(before, null, 2).split('\n');
+  const right = JSON.stringify(after, null, 2).split('\n');
+  const lcs = Array.from({ length: left.length + 1 }, () => Array(right.length + 1).fill(0));
+  for (let i = left.length - 1; i >= 0; i--) for (let j = right.length - 1; j >= 0; j--)
+    lcs[i][j] = left[i] === right[j] ? 1 + lcs[i + 1][j + 1] : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+  const lines = ['--- pocketify.json / before', '+++ pocketify.json / after'];
+  let i = 0, j = 0;
+  while (i < left.length || j < right.length) {
+    if (i < left.length && j < right.length && left[i] === right[j]) { lines.push(` ${left[i++]}`); j++; }
+    else if (i < left.length && (j === right.length || lcs[i + 1][j] >= lcs[i][j + 1])) lines.push(`-${left[i++]}`);
+    else lines.push(`+${right[j++]}`);
+  }
+  return lines.join('\n');
+}
+
 export function exportJson(name, value) {
   const blob = new Blob([JSON.stringify(value, null, 2) + '\n'], { type: 'application/json' });
   const url = URL.createObjectURL(blob);

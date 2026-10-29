@@ -1,4 +1,4 @@
-import { makeWorkspace, exportJson, diagnosticVerdict } from './lab-core.js';
+import { makeWorkspace, exportJson, diagnosticVerdict, diffJson } from './lab-core.js';
 const $ = (id) => document.getElementById(id);
 const set = (id, value) => { $(id).textContent = String(value ?? '—'); };
 const fmtMs = (value) => Number.isFinite(value) ? `${Math.round(value)} ms` : '—';
@@ -204,7 +204,7 @@ function showMigration(state) {
   set('migration-status', state.config.provider === 'qvac-sdk' ? 'MIGRATED TO QVAC' : 'CLOUD CONFIGURATION');
   $('migrate-button').disabled = state.config.provider === 'qvac-sdk';
   $('reset-button').disabled = false;
-  if (local && state.original) set('migration-diff', `--- pocketify.json (original)\n${JSON.stringify(state.original, null, 2)}\n+++ pocketify.json (workspace)\n${JSON.stringify(state.config, null, 2)}`);
+  if (local && state.original) set('migration-diff', `${diffJson(state.original, state.config)}\nValidation: ${state.backup ? 'ORIGINAL BACKUP PRESENT' : 'AWAITING MIGRATION'}`);
 }
 function showScan(scan) {
   const box = $('scan-output'); box.replaceChildren();
@@ -224,7 +224,7 @@ async function migrationAction(action) {
           validation: { supported: true, backupPreserved: JSON.stringify(before) === JSON.stringify(browserWorkspace.state.backup) } }; }
       showMigration(browserWorkspace.state); showScan(browserWorkspace.scan());
       set('migration-status', action === 'reset' ? 'BROWSER WORKSPACE RESET' : 'MIGRATION APPLIED / LIVE IN BROWSER');
-      set('migration-diff', lastMigration ? `--- pocketify.json (before)\n${JSON.stringify(lastMigration.before, null, 2)}\n+++ pocketify.json (after)\n${JSON.stringify(lastMigration.after, null, 2)}\nChanged: ${lastMigration.changedFields.join(', ')}` : 'Apply migration to inspect the exact configuration change.');
+      set('migration-diff', lastMigration ? `${diffJson(lastMigration.before, lastMigration.after)}\nChanged: ${lastMigration.changedFields.join(', ')}\nValidation: ${lastMigration.validation.supported && lastMigration.validation.backupPreserved ? 'PASS / SUPPORTED CONFIG / ORIGINAL BACKUP PRESERVED' : 'FAIL'}` : 'Apply migration to inspect the exact configuration change.');
     } catch (error) { set('migration-status', `ERROR: ${error.message}`); }
     return;
   }

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { makeWorkspace, scanSources, migrateConfig, diagnosticVerdict, exportJson } from '../site/lab-core.js';
+import { makeWorkspace, scanSources, migrateConfig, diagnosticVerdict, exportJson, diffJson } from '../site/lab-core.js';
 
 const source = await readFile(new URL('../examples/ticket-triage/app.mjs', import.meta.url), 'utf8');
 const seed = JSON.parse(await readFile(new URL('../studio/seed/pocketify.json', import.meta.url), 'utf8'));
@@ -19,6 +19,8 @@ test('in-memory migration preserves backup, is idempotent and resets', () => {
   assert.equal(workspace.migrate().changed, true);
   assert.deepEqual(workspace.state.backup, seed);
   assert.equal(workspace.state.config.provider, 'qvac-sdk');
+  assert.match(diffJson(seed, workspace.state.config), /^-\s+"provider": "cloud-openai-compatible"/m);
+  assert.match(diffJson(seed, workspace.state.config), /^\+\s+"provider": "qvac-sdk"/m);
   assert.equal(workspace.migrate().changed, false);
   workspace.reset();
   assert.deepEqual(workspace.state.config, seed);
