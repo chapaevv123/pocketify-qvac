@@ -21,8 +21,8 @@ test('challenge verdict is conservative', () => {
   assert.equal(challengeVerdict({ ...base, before: reachable }), 'FAIL');
   assert.equal(challengeVerdict({ ...base, after: reachable }), 'FAIL');
   assert.equal(challengeVerdict({ ...base, inferenceSucceeded: false }), 'FAIL');
-  assert.equal(challengeVerdict({ ...base, after: uncertain }), 'UNVERIFIED');
-  assert.equal(challengeVerdict({ ...base, manualDisconnected: false }), 'UNVERIFIED');
+  assert.equal(challengeVerdict({ ...base, after: uncertain }), 'INCONCLUSIVE');
+  assert.equal(challengeVerdict({ ...base, manualDisconnected: false }), 'INCONCLUSIVE');
 });
 
 test('Studio serves local assets and actual status without claiming a loaded model', async () => withServer(async (base) => {
@@ -37,7 +37,7 @@ test('Studio serves local assets and actual status without claiming a loaded mod
   assert.ok(['IDLE', 'LOADED'].includes(status.runtime));
   assert.equal(status.localOnly, true);
   const data = await (await fetch(`${base}/data.json`)).json();
-  assert.equal(data.runs.length, 3);
+  assert.equal(data.runs.length, 5);
   assert.equal(data.videoUrl, null);
 }));
 

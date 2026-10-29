@@ -87,9 +87,10 @@ export async function probeExternal() {
       checks.some((x) => x.state === 'UNAVAILABLE') ? 'UNVERIFIED' : 'BLOCKED' };
 }
 
-export function challengeVerdict({ manualDisconnected, before, after, inferenceSucceeded, localServerReached }) {
+export function challengeVerdict({ manualDisconnected, before, after, inferenceSucceeded, localServerReached, warmupCompleted, onlineObservation }) {
   if (!localServerReached || !inferenceSucceeded) return 'FAIL';
   if (before.status === 'REACHABLE' || after.status === 'REACHABLE') return 'FAIL';
-  if (!manualDisconnected || before.status !== 'BLOCKED' || after.status !== 'BLOCKED') return 'UNVERIFIED';
+  if (warmupCompleted === false || (onlineObservation && onlineObservation.status !== 'REACHABLE')) return 'INCONCLUSIVE';
+  if (!manualDisconnected || before.status !== 'BLOCKED' || after.status !== 'BLOCKED') return 'INCONCLUSIVE';
   return 'PASS';
 }

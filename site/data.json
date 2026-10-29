@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-29T00:07:03.561Z",
+  "generatedAt": "2026-10-29T07:17:09.108Z",
   "mode": "PUBLIC_SHOWCASE",
   "repository": "https://github.com/chapaevv123/pocketify-qvac",
   "videoUrl": null,
@@ -456,6 +456,306 @@
           "correct": true,
           "latencyMs": 154,
           "clientRssBytes": 68075520
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-10-29T07:11:11.039Z",
+      "backend": "@qvac/sdk",
+      "sdkVersion": "0.22.0",
+      "model": "QWEN3_600M_INST_Q4",
+      "modelFile": "Qwen3-0.6B-Q4_0.gguf",
+      "modelExpectedBytes": 382156480,
+      "modelSha256": "33bcc57074ec7b6eada5a90651ee546ec0c2b271002c22baf9f1b2dd1e8f75cb",
+      "offlineRequested": false,
+      "networkProbe": {
+        "target": "1.1.1.1",
+        "reachable": true,
+        "detail": "TCP EACCES; ICMP exit=0",
+        "tcp": {
+          "reachable": false,
+          "detail": "EACCES"
+        },
+        "icmp": {
+          "reachable": true,
+          "detail": "exit=0"
+        }
+      },
+      "offlineEvidence": "Not an offline run",
+      "cloudBaseline": "NOT MEASURED",
+      "environment": {
+        "platform": "win32",
+        "arch": "x64",
+        "node": "v22.23.1",
+        "cpus": [
+          "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+        ],
+        "totalRamBytes": 34245525504
+      },
+      "memory": {
+        "hostFreeBeforeBytes": 15343095808,
+        "hostFreeAfterLoadBytes": 15635496960,
+        "hostFreeAfterEvalBytes": 15339831296,
+        "note": "Host free RAM is a system-wide snapshot, not QVAC process memory. clientRssBytes excludes the QVAC worker."
+      },
+      "loadMs": 18760,
+      "accuracy": 0.6,
+      "correct": 6,
+      "count": 10,
+      "successfulInferences": 10,
+      "medianLatencyMs": 152.5,
+      "minLatencyMs": 137,
+      "maxLatencyMs": 9813,
+      "rows": [
+        {
+          "id": "B01",
+          "text": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+          "expected": "billing",
+          "predicted": "other",
+          "summary": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+          "correct": false,
+          "latencyMs": 9813,
+          "clientRssBytes": 66510848
+        },
+        {
+          "id": "B02",
+          "text": "The invoice for September has the wrong company name and tax details.",
+          "expected": "billing",
+          "predicted": "other",
+          "summary": "The invoice for September has the wrong company name and tax details.",
+          "correct": false,
+          "latencyMs": 152,
+          "clientRssBytes": 66699264
+        },
+        {
+          "id": "U01",
+          "text": "The export button crashes with an error every time I download a CSV file.",
+          "expected": "bug",
+          "predicted": "bug",
+          "summary": "The export button crashes when downloading a CSV file every time.",
+          "correct": true,
+          "latencyMs": 141,
+          "clientRssBytes": 66826240
+        },
+        {
+          "id": "U02",
+          "text": "After saving a ticket, the page goes blank and my changes disappear.",
+          "expected": "bug",
+          "predicted": "access",
+          "summary": "The ticket is being saved, but the page is blank and changes disappear. This could be due to a corrupted or incomplete ticket.",
+          "correct": false,
+          "latencyMs": 197,
+          "clientRssBytes": 66883584
+        },
+        {
+          "id": "A01",
+          "text": "My password reset link expired and I cannot sign in to my account.",
+          "expected": "access",
+          "predicted": "access",
+          "summary": "My password reset link expired and I cannot sign in to my account.",
+          "correct": true,
+          "latencyMs": 154,
+          "clientRssBytes": 67031040
+        },
+        {
+          "id": "A02",
+          "text": "Please grant our new teammate permission to view the support dashboard.",
+          "expected": "access",
+          "predicted": "access",
+          "summary": "Requesting permission to view the support dashboard for the new teammate",
+          "correct": true,
+          "latencyMs": 148,
+          "clientRssBytes": 67084288
+        },
+        {
+          "id": "F01",
+          "text": "Could you add dark mode to the dashboard in a future release?",
+          "expected": "feature",
+          "predicted": "other",
+          "summary": "Could you add dark mode to the dashboard in a future release?",
+          "correct": false,
+          "latencyMs": 153,
+          "clientRssBytes": 67608576
+        },
+        {
+          "id": "F02",
+          "text": "We would like a new Slack notification when a high priority ticket arrives.",
+          "expected": "feature",
+          "predicted": "feature",
+          "summary": "We would like a new Slack notification when a high priority ticket arrives.",
+          "correct": true,
+          "latencyMs": 154,
+          "clientRssBytes": 67715072
+        },
+        {
+          "id": "O01",
+          "text": "What are your support hours during the holiday weekend?",
+          "expected": "other",
+          "predicted": "other",
+          "summary": "Information request for support hours during the holiday weekend.",
+          "correct": true,
+          "latencyMs": 137,
+          "clientRssBytes": 67837952
+        },
+        {
+          "id": "O02",
+          "text": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+          "expected": "other",
+          "predicted": "other",
+          "summary": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+          "correct": true,
+          "latencyMs": 151,
+          "clientRssBytes": 67682304
+        }
+      ]
+    },
+    {
+      "generatedAt": "2026-10-29T07:11:27.836Z",
+      "backend": "@qvac/sdk",
+      "sdkVersion": "0.22.0",
+      "model": "QWEN3_600M_INST_Q4",
+      "modelFile": "Qwen3-0.6B-Q4_0.gguf",
+      "modelExpectedBytes": 382156480,
+      "modelSha256": "33bcc57074ec7b6eada5a90651ee546ec0c2b271002c22baf9f1b2dd1e8f75cb",
+      "offlineRequested": false,
+      "networkProbe": {
+        "target": "1.1.1.1",
+        "reachable": true,
+        "detail": "TCP EACCES; ICMP exit=0",
+        "tcp": {
+          "reachable": false,
+          "detail": "EACCES"
+        },
+        "icmp": {
+          "reachable": true,
+          "detail": "exit=0"
+        }
+      },
+      "offlineEvidence": "Not an offline run",
+      "cloudBaseline": "NOT MEASURED",
+      "environment": {
+        "platform": "win32",
+        "arch": "x64",
+        "node": "v22.23.1",
+        "cpus": [
+          "Intel(R) Core(TM) i9-10900KF CPU @ 3.70GHz"
+        ],
+        "totalRamBytes": 34245525504
+      },
+      "memory": {
+        "hostFreeBeforeBytes": 15703527424,
+        "hostFreeAfterLoadBytes": 14218309632,
+        "hostFreeAfterEvalBytes": 16494804992,
+        "note": "Host free RAM is a system-wide snapshot, not QVAC process memory. clientRssBytes excludes the QVAC worker."
+      },
+      "loadMs": 5771,
+      "accuracy": 0.5,
+      "correct": 5,
+      "count": 10,
+      "successfulInferences": 10,
+      "medianLatencyMs": 138,
+      "minLatencyMs": 121,
+      "maxLatencyMs": 9656,
+      "rows": [
+        {
+          "id": "B01",
+          "text": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+          "expected": "billing",
+          "predicted": "other",
+          "summary": "I was charged twice for my monthly subscription. Please refund the duplicate payment.",
+          "correct": false,
+          "latencyMs": 9656,
+          "clientRssBytes": 68583424
+        },
+        {
+          "id": "B02",
+          "text": "The invoice for September has the wrong company name and tax details.",
+          "expected": "billing",
+          "predicted": "other",
+          "summary": "The invoice for September has the wrong company name and tax details.",
+          "correct": false,
+          "latencyMs": 159,
+          "clientRssBytes": 68792320
+        },
+        {
+          "id": "U01",
+          "text": "The export button crashes with an error every time I download a CSV file.",
+          "expected": "bug",
+          "predicted": "bug",
+          "summary": "The export button crashes with an error every time a CSV file is downloaded.",
+          "correct": true,
+          "latencyMs": 137,
+          "clientRssBytes": 68812800
+        },
+        {
+          "id": "U02",
+          "text": "After saving a ticket, the page goes blank and my changes disappear.",
+          "expected": "bug",
+          "predicted": "other",
+          "summary": "After saving a ticket, the page goes blank and my changes disappear.",
+          "correct": false,
+          "latencyMs": 139,
+          "clientRssBytes": 68915200
+        },
+        {
+          "id": "A01",
+          "text": "My password reset link expired and I cannot sign in to my account.",
+          "expected": "access",
+          "predicted": "access",
+          "summary": "My password reset link expired and I cannot sign in to my account.",
+          "correct": true,
+          "latencyMs": 143,
+          "clientRssBytes": 68915200
+        },
+        {
+          "id": "A02",
+          "text": "Please grant our new teammate permission to view the support dashboard.",
+          "expected": "access",
+          "predicted": "access",
+          "summary": "Granting the new teammate access to view the support dashboard.",
+          "correct": true,
+          "latencyMs": 121,
+          "clientRssBytes": 68931584
+        },
+        {
+          "id": "F01",
+          "text": "Could you add dark mode to the dashboard in a future release?",
+          "expected": "feature",
+          "predicted": "other",
+          "summary": "The user requested to add dark mode to the dashboard in a future release.",
+          "correct": false,
+          "latencyMs": 130,
+          "clientRssBytes": 68952064
+        },
+        {
+          "id": "F02",
+          "text": "We would like a new Slack notification when a high priority ticket arrives.",
+          "expected": "feature",
+          "predicted": "other",
+          "summary": "We would like a new Slack notification when a high priority ticket arrives.",
+          "correct": false,
+          "latencyMs": 131,
+          "clientRssBytes": 69033984
+        },
+        {
+          "id": "O01",
+          "text": "What are your support hours during the holiday weekend?",
+          "expected": "other",
+          "predicted": "other",
+          "summary": "information requests, thanks or feedback that fits none of the above",
+          "correct": true,
+          "latencyMs": 124,
+          "clientRssBytes": 69054464
+        },
+        {
+          "id": "O02",
+          "text": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+          "expected": "other",
+          "predicted": "other",
+          "summary": "Thanks for the helpful documentation; I just wanted to share positive feedback.",
+          "correct": true,
+          "latencyMs": 160,
+          "clientRssBytes": 69074944
         }
       ]
     }

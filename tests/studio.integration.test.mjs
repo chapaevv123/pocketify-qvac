@@ -15,6 +15,7 @@ test('Studio API uses real QVAC and issues a conservative challenge receipt', { 
   try {
     const prepared = await post('/api/prepare', {});
     assert.equal(prepared.runtime, 'LOADED');
+    assert.equal(prepared.warmup.completed, true);
     const triage = await post('/api/triage', { ticket });
     assert.equal(triage.execution, 'LOCAL_QVAC');
     assert.equal(triage.model, 'QWEN3_600M_INST_Q4');
@@ -23,6 +24,8 @@ test('Studio API uses real QVAC and issues a conservative challenge receipt', { 
     const verification = await post('/api/challenge/verify', { ticket, manualDisconnected: false });
     const challenge = await post('/api/challenge/infer', { ticket, verificationId: verification.verificationId });
     assert.equal(challenge.receipt.inference.completed, true);
+    assert.equal(challenge.receipt.ticket, ticket);
+    assert.ok(challenge.receipt.inference.summary.length > 5);
     assert.notEqual(challenge.receipt.verdict, 'PASS');
     assert.equal(challenge.receipt.modelId, triage.modelId);
     const receiptResponse = await fetch(`${base}/api/receipts/${challenge.receipt.id}`);

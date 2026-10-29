@@ -1,15 +1,9 @@
 import { readdir, readFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { PATTERNS } from '../site/lab-core.js';
 
 const EXT = new Set(['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs']);
 const SKIP = new Set(['node_modules', '.git', '.qvac', 'dist', 'build', 'coverage']);
-const PATTERNS = [
-  ['openai-import', /(?:from\s*['"]openai['"]|require\(['"]openai['"]\))/g],
-  ['openai-constructor', /new\s+OpenAI\s*\(/g],
-  ['chat-completions', /\.chat\.completions\.create\s*\(/g],
-  ['responses-api', /\.responses\.create\s*\(/g],
-  ['pocketify-client', /new\s+OpenAICompatClient\s*\(/g],
-];
 
 export async function scanRepository(root, { maxFiles = 500 } = {}) {
   const base = await realpath(root);

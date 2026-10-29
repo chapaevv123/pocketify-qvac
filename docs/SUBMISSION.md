@@ -1,5 +1,9 @@
 # DoraHacks submission draft (English)
 
+## Interactive public release note
+
+The public Static Site now executes a browser scanner over the bundled example source and migrates an isolated in-memory configuration. Visitors can inspect the exact diff, backup, real recorded QVAC outputs, individual mismatches, and browser network request timings; JSON exports are available. Fresh QVAC inference still runs only in the loopback Studio. The public URL remains unverified. The offline challenge requires a manual physical disconnect and has no verified PASS receipt yet. Use `docs/VIDEO_DEMO.md` for the current recording sequence.
+
 ## Title and pitch
 
 **Pocketify Studio — turn off the internet. Keep the intelligence.**
@@ -10,7 +14,7 @@ Pocketify Studio is a local laboratory that scans a supported JavaScript AI work
 
 Support teams often send ticket text to a cloud LLM just to choose a queue and write a short summary. Pocketify demonstrates this workflow running on hardware the developer controls. The bundled Ticket Triage app uses an OpenAI-compatible `chat.completions.create` client shape. A scanner identifies common JS/TS LLM call sites. A migration command validates and backs up the supported example config, then routes requests to the official `@qvac/sdk`. The evaluator runs ten synthetic tickets with labels fixed independently of model output, writes a transparent JSON record, and renders an HTML report covering accuracy, latency, privacy and limitations.
 
-Pocketify Studio adds a browser-based local instrument on `127.0.0.1:4317`. Judges can submit a ticket and see genuine local classification, summary, model identity and timing. The Offline Challenge prepares the model, asks the owner to disconnect manually, checks DNS/TCP/HTTPS/ICMP before and after real inference, and exports a JSON receipt. PASS requires all tested external routes blocked; any reachable route forces FAIL. The same interface is prepared for Render Static Site hosting, where live actions are disabled and visitors can inspect genuine recorded QVAC outputs and stored evaluations. The public site never simulates inference.
+Pocketify Studio adds a browser-based local instrument on `127.0.0.1:4317`. Judges can submit a ticket and see genuine local classification, summary, model identity and timing. The Offline Challenge prepares and warms up the model, asks the owner to disconnect manually, checks DNS/TCP/HTTPS/ICMP before and after fresh inference, and exports a JSON receipt. PASS requires all tested external routes blocked; any reachable route forces FAIL. The Render Static Site runs interactive scanner, in-memory migration, recorded evidence exploration and browser diagnostics. The public site never simulates inference.
 
 Measured runs with the release prompt on Windows 10 Pro, NVIDIA RTX 3070 and 32 GB RAM classified between 6/10 and 8/10 tickets correctly. The latest run scored 6/10 with 161.5 ms median inference and 6,006 ms model load. One earlier run scored 8/10 with 150 ms median inference. Each had a roughly 7-second first generation. This variability is a known quality limit of the small model. Cloud quality and latency were NOT MEASURED. The owner-run cached QVAC inference succeeded, but the saved offline log lacks a simultaneous connectivity record; manual network-disconnection recording is needed for final judging evidence.
 

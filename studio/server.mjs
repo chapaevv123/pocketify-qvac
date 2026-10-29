@@ -22,6 +22,7 @@ if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Por
 const client = new QvacClient();
 const pendingChallenges = new Map();
 let busy = false;
+let warmup = null;
 let shuttingDown = false;
 const json = (res, status, data, extra = {}) => {
   const bytes = Buffer.from(JSON.stringify(data));
@@ -86,7 +87,8 @@ async function migrationState() {
 }
 
 async function benchmarks() {
-  const files = ['sample-2026-10-29.json', 'sample-release-2026-10-29.json', 'sample-current-2026-10-29.json'];
+  const files = ['sample-2026-10-29.json', 'sample-release-2026-10-29.json', 'sample-current-2026-10-29.json',
+    'prompt-refined-run-1.json', 'prompt-refined-run-2.json'];
   const runs = [];
   for (const file of files) {
     try { runs.push(JSON.parse(await readFile(path.join(root, 'reports', file), 'utf8'))); } catch {}
@@ -106,6 +108,7 @@ const assets = new Map([
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/style.css', ['style.css', 'text/css; charset=utf-8']],
   ['/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/lab-core.js', ['lab-core.js', 'text/javascript; charset=utf-8']],
   ['/mark.svg', ['mark.svg', 'image/svg+xml']],
   ['/studio-desktop.png', ['studio-desktop.png', 'image/png']],
   ['/studio-live-lab.png', ['studio-live-lab.png', 'image/png']],
@@ -137,7 +140,15 @@ export function createStudioServer() {
           'cache-control': 'no-store', 'x-content-type-options': 'nosniff' });
         return res.end(contents);
       }
-      if (req.method === 'POST' && url.pathname === '/api/prepare') return json(res, 200, await runExclusive(async () => { await client.open(); return status(); }));
+      if (req.method === 'POST' && url.pathname === '/api/prepare') return json(res, 200, await runExclusive(async () => {
+        const onlineObservation = await probeExternal();
+        if (!(await cacheStatus())) return { ...(await status()), warmup: { completed: false, error: 'Required model file is not cached.' }, onlineObservation };
+        await client.open();
+        const result = await triage(client, 'The CSV export crashes when I click Download.');
+        warmup = { completed: true, at: new Date().toISOString(), durationMs: result.inferenceMs,
+          input: 'The CSV export crashes when I click Download.', output: { category: result.category, summary: result.summary }, onlineObservation };
+        return { ...(await status()), warmup };
+      }));
       if (req.method === 'POST' && url.pathname === '/api/triage') {
         const body = await readJson(req);
         if (typeof body.ticket !== 'string' || !body.ticket.trim() || body.ticket.length > 4000) return fail(res, 400, 'INVALID_TICKET', 'Ticket must be 1–4000 characters.');
@@ -177,14 +188,19 @@ export function createStudioServer() {
           catch (error) { console.error(`[studio] challenge inference: ${error.stack || error.message}`); inferenceError = 'QVAC inference failed; check the Studio terminal.'; }
           const after = await probeExternal();
           const verdict = challengeVerdict({ manualDisconnected: pending.manualDisconnected, before, after,
-            inferenceSucceeded: Boolean(inference), localServerReached: true });
+            inferenceSucceeded: Boolean(inference), localServerReached: true,
+            warmupCompleted: warmup?.completed === true, onlineObservation: warmup?.onlineObservation });
           const id = randomUUID();
           const receipt = { id, at: new Date().toISOString(), verdict, manualDisconnected: pending.manualDisconnected,
             localServerReached: true, externalBefore: before, externalAfter: after,
             model: MODEL.name, modelFile: MODEL.modelId, modelId: client.modelId,
-            sdkVersion: '0.22.0', ticketSha256: digest(body.ticket),
+            sdkVersion: '0.22.0', ticketSha256: digest(body.ticket), ticket: body.ticket,
+            warmup, verificationCriteria: ['cached model', 'genuine warm-up', 'manual disconnect confirmation',
+              'all DNS/TCP/HTTPS/ICMP checks blocked before and after inference', 'fresh QVAC inference completed'],
+            limitations: ['Network probes sample selected routes only; they cannot prove all paths unavailable.',
+              'Manual disconnect is owner attestation; network adapter state is not independently recorded.'],
             modelLoadMs: client.loadMs,
-            inference: inference ? { completed: true, category: inference.category,
+            inference: inference ? { completed: true, category: inference.category, summary: inference.summary,
               durationMs: inference.inferenceMs, clientRssBytes: inference.clientRssBytes,
               outputSha256: digest(JSON.stringify({ category: inference.category, summary: inference.summary })) } :
               { completed: false, error: inferenceError },

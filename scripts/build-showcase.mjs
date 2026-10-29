@@ -4,7 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { scanRepository } from '../src/scanner.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const reports = ['sample-2026-10-29.json', 'sample-release-2026-10-29.json', 'sample-current-2026-10-29.json'];
+const reports = ['sample-2026-10-29.json', 'sample-release-2026-10-29.json', 'sample-current-2026-10-29.json',
+  'prompt-refined-run-1.json', 'prompt-refined-run-2.json'];
 const runs = await Promise.all(reports.map(async (file) => JSON.parse(await readFile(path.join(root, 'reports', file), 'utf8'))));
 const seed = JSON.parse(await readFile(path.join(root, 'studio', 'seed', 'pocketify.json'), 'utf8'));
 const source = await readFile(path.join(root, 'examples', 'ticket-triage', 'app.mjs'), 'utf8');

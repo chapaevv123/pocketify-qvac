@@ -1,5 +1,11 @@
 # Measured evidence summary
 
+## Interactive release provenance
+
+The browser scanner reads the bundled `app.mjs` source from build data and applies the same detection rules imported by the CLI scanner. Browser migration executes a validated configuration transform in memory, with preserved original backup; no visitor file or Git repository is written. Public QVAC ticket records are exact rows from committed evaluation JSON. Browser network checks only measure same-origin fetches, browser events and timings; caches or service workers may satisfy requests. Neither these checks nor Node's selected external probes establish absolute internet isolation.
+
+The original committed ten-ticket QVAC runs are **8/10, 6/10 and 6/10** with median inference **150, 158 and 161.5 ms**. The most persistent errors are `access` and `feature` requests classified as `other`; another run also misclassified billing and bug examples. A generic prompt clarification was tested twice with unchanged ground truth; it scored **6/10 (152.5 ms median)** and **5/10 (138 ms median)**. Both raw regressions remain in `reports/prompt-refined-run-1.json` and `reports/prompt-refined-run-2.json`. The clarification was reverted. The prompt defines labels, constrained JSON is parsed strictly, and the evaluator preserves all mismatches. No quality improvement is claimed. A physical-disconnect PASS remains unverified.
+
 The full raw logs remain in the local `evidence/` directory and are intentionally excluded from Git because they include machine paths and environment details. The repository includes three full JSON and HTML evaluation snapshots in `reports/`. Studio's public screenshots in `site/` are genuine browser captures of the local interface; the Live Lab capture shows a real QVAC response.
 
 | Check | Observed result |

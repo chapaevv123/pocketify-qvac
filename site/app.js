@@ -1,3 +1,4 @@
+import { makeWorkspace, exportJson, diagnosticVerdict } from './lab-core.js';
 const $ = (id) => document.getElementById(id);
 const set = (id, value) => { $(id).textContent = String(value ?? '—'); };
 const fmtMs = (value) => Number.isFinite(value) ? `${Math.round(value)} ms` : '—';
@@ -12,6 +13,11 @@ let prepared = false;
 let staticData = null;
 let currentRuns = [];
 let activeRequest = false;
+let browserWorkspace = null;
+let lastMigration = null;
+let selectedRecord = null;
+let networkEvents = [];
+let lastNetworkCheck = null;
 
 function errorBox(id, message) { const box = $(id); box.textContent = message; box.hidden = !message; }
 function buttonBusy(id, busy, label) { const el = $(id); el.disabled = busy; el.textContent = label; }
@@ -46,7 +52,7 @@ function renderSamples() {
 }
 function renderRecordedSamples() {
   const run = staticData?.runs?.at(-1);
-  const rows = run?.rows?.filter((row) => ['B01', 'U01', 'A01', 'F01'].includes(row.id)) || [];
+  const rows = run?.rows || [];
   const labels = { B01: 'Duplicate charge', U01: 'CSV crash', A01: 'Access reset', F01: 'Feature request' };
   const box = $('sample-tickets'); box.replaceChildren();
   if (!rows.length) {
@@ -55,6 +61,7 @@ function renderRecordedSamples() {
     return;
   }
   function select(row, button) {
+    selectedRecord = { runAt: run.generatedAt, sdkVersion: run.sdkVersion, model: run.model, ...row };
     $('ticket-input').value = row.text;
     for (const item of box.children) item.setAttribute('aria-pressed', String(item === button));
     set('result-category', row.predicted || 'Unavailable');
@@ -65,16 +72,16 @@ function renderRecordedSamples() {
     set('lab-execution', 'RECORDED QVAC / NOT LIVE');
     set('result-status', `RECORDED OUTPUT / ${row.id}`);
     set('result-time', new Date(run.generatedAt).toLocaleDateString());
-    set('recorded-meta', `Expected: ${row.expected} · Observed: ${row.predicted || 'error'} · ${row.correct ? 'MATCH' : 'MISMATCH'} · Evaluation: ${new Date(run.generatedAt).toLocaleString()}`);
+    set('recorded-meta', `Expected: ${row.expected} · Observed: ${row.predicted || 'error'} · ${row.correct ? 'MATCH' : 'MISMATCH'} · ${row.error || 'No recorded error'} · Evaluation: ${new Date(run.generatedAt).toLocaleString()}`);
   }
   for (const row of rows) {
     const button = document.createElement('button');
-    button.className = 'sample'; button.type = 'button'; button.textContent = labels[row.id];
+    button.className = 'sample'; button.type = 'button'; button.textContent = labels[row.id] || row.id;
     button.setAttribute('aria-pressed', 'false');
     button.addEventListener('click', () => select(row, button));
     box.append(button);
   }
-  box.children[1]?.click();
+  box.children[0]?.click();
 }
 function updateStatus(status) {
   const loaded = status.runtime === 'LOADED';
@@ -154,7 +161,7 @@ async function prepareChallenge() {
   set('challenge-verdict', 'PREPARING');
   try {
     const state = await api('/api/prepare', {});
-    if (state.runtime !== 'LOADED') throw new Error('QVAC did not confirm a loaded model.');
+    if (state.runtime !== 'LOADED' || !state.warmup?.completed) throw new Error(state.warmup?.error || 'QVAC warm-up inference did not complete.');
     prepared = true; setStep(1);
     const box = $('challenge-verdict'); box.className = 'challenge-verdict';
     box.replaceChildren(document.createTextNode('DISCONNECT'));
@@ -192,21 +199,35 @@ async function runChallenge() {
 function showMigration(state) {
   set('migration-source', state.source);
   set('migration-config', JSON.stringify(state.config, null, 2));
-  set('migration-backup', state.backup ? JSON.stringify(state.backup, null, 2) : 'Backup not created yet. Apply migration in the local Studio.');
+  set('migration-backup', state.backup ? JSON.stringify(state.backup, null, 2) : 'Backup not created yet. Apply safe migration.');
   set('migration-config-state', state.config.provider === 'qvac-sdk' ? 'LOCAL / ACTIVE' : 'CLOUD / INACTIVE');
   set('migration-status', state.config.provider === 'qvac-sdk' ? 'MIGRATED TO QVAC' : 'CLOUD CONFIGURATION');
-  $('migrate-button').disabled = !local || state.config.provider === 'qvac-sdk';
-  $('reset-button').disabled = !local;
+  $('migrate-button').disabled = state.config.provider === 'qvac-sdk';
+  $('reset-button').disabled = false;
+  if (local && state.original) set('migration-diff', `--- pocketify.json (original)\n${JSON.stringify(state.original, null, 2)}\n+++ pocketify.json (workspace)\n${JSON.stringify(state.config, null, 2)}`);
 }
 function showScan(scan) {
   const box = $('scan-output'); box.replaceChildren();
   const title = document.createElement('span'); title.textContent = `SCANNER OUTPUT / ${scan.scannedFiles} SOURCE FILE(S)`; box.append(title);
   const summary = document.createElement('p');
-  summary.textContent = scan.findings.length ? scan.findings.map((x) => `${x.file}:${x.line}  ${x.kind}`).join('  ·  ') : 'No supported integration points found.';
+  summary.textContent = scan.findings.length ? scan.findings.map((x) => `${x.file}:${x.line}  ${x.kind} / ${x.supported === false ? 'UNSUPPORTED' : 'DETECTED'}\n${x.excerpt || ''}`).join('\n\n') : 'No supported integration points found.';
   box.append(summary);
+  const ready = document.createElement('p'); ready.textContent = `Migration readiness: ${scan.supportedMigration ? 'SUPPORTED CONFIGURATION FOUND' : 'NOT READY'}. ${scan.scope || 'Only pocketify.json is changed.'}`; box.append(ready);
 }
 async function migrationAction(action) {
-  if (!local) return;
+  if (!local) {
+    try {
+      if (action === 'reset') { browserWorkspace.reset(); lastMigration = null; }
+      else { const before = browserWorkspace.state.config; const result = browserWorkspace.migrate();
+        lastMigration = { at: new Date().toISOString(), before, after: browserWorkspace.state.config,
+          backup: browserWorkspace.state.backup, changedFields: result.changedFields || [],
+          validation: { supported: true, backupPreserved: JSON.stringify(before) === JSON.stringify(browserWorkspace.state.backup) } }; }
+      showMigration(browserWorkspace.state); showScan(browserWorkspace.scan());
+      set('migration-status', action === 'reset' ? 'BROWSER WORKSPACE RESET' : 'MIGRATION APPLIED / LIVE IN BROWSER');
+      set('migration-diff', lastMigration ? `--- pocketify.json (before)\n${JSON.stringify(lastMigration.before, null, 2)}\n+++ pocketify.json (after)\n${JSON.stringify(lastMigration.after, null, 2)}\nChanged: ${lastMigration.changedFields.join(', ')}` : 'Apply migration to inspect the exact configuration change.');
+    } catch (error) { set('migration-status', `ERROR: ${error.message}`); }
+    return;
+  }
   set('migration-status', action === 'run' ? 'APPLYING MIGRATION…' : 'RESETTING WORKSPACE…');
   try {
     const data = await api(`/api/migration/${action}`, {});
@@ -222,7 +243,7 @@ function renderBenchmarks(runs) {
   set('metric-size', r.count); set('metric-accuracy', `${Math.round(r.accuracy * 100)}%`);
   set('metric-correct', `${r.correct} OF ${r.count} MATCHED`);
   set('metric-latency', fmtMs(r.medianLatencyMs)); set('metric-load', fmtMs(r.loadMs));
-  set('benchmark-date', new Date(r.generatedAt).toLocaleString());
+  set('benchmark-date', `${new Date(r.generatedAt).toLocaleString()}${staticData?.runs?.some((x, i) => i >= 3 && x.generatedAt === r.generatedAt) ? ' / PROMPT EXPERIMENT REVERTED' : ''}`);
   set('latency-model', r.model);
   const matrix = $('outcome-matrix'); matrix.replaceChildren();
   for (const row of r.rows) {
@@ -235,7 +256,7 @@ function renderBenchmarks(runs) {
   const comparison = $('run-comparison'); comparison.replaceChildren();
   currentRuns.forEach((run, index) => {
     const row = document.createElement('div'); row.className = 'run-line';
-    const label = document.createElement('span'); label.textContent = `RUN ${String(index + 1).padStart(2, '0')}`;
+    const label = document.createElement('span'); label.textContent = `RUN ${String(index + 1).padStart(2, '0')}${index >= 3 && index <= 4 ? ' / EXP' : ''}`;
     label.title = new Date(run.generatedAt).toLocaleString();
     const bar = document.createElement('div'); bar.className = 'bar';
     const fill = document.createElement('i'); fill.style.width = `${Math.round(run.accuracy * 100)}%`; bar.append(fill);
@@ -267,7 +288,7 @@ async function rerunEvaluation() {
 
 function publicMode() {
   local = false;
-  set('mode-badge', 'PUBLIC SHOWCASE / NO LIVE RUNTIME');
+  set('mode-badge', 'LIVE IN BROWSER / RECORDED REAL QVAC');
   set('trust-runtime', 'RUN LOCALLY TO VERIFY');
   set('lab-execution', 'RECORDED / NOT LIVE'); setCore('IDLE');
   set('lab-intro', 'Explore genuine outputs saved by a previous local QVAC evaluation. Choose a ticket to inspect the recorded classification, summary and timing. New inference requires the local Studio.');
@@ -278,8 +299,13 @@ function publicMode() {
   $('public-lab-note').hidden = false;
   $('ticket-input').readOnly = true;
   renderRecordedSamples();
-  for (const id of ['analyze-button', 'prepare-button', 'verify-button', 'migrate-button', 'reset-button', 'scan-button', 'evaluate-button']) $(id).disabled = true;
+  for (const id of ['analyze-button', 'prepare-button', 'verify-button', 'evaluate-button']) $(id).disabled = true;
+  $('scan-button').disabled = false;
   $('analyze-button').hidden = true;
+  $('evaluate-button').hidden = true;
+  $('prepare-button').hidden = true;
+  $('verify-button').hidden = true;
+  $('manual-confirm').closest('.confirm').hidden = true;
   const box = $('challenge-verdict'); box.className = 'challenge-verdict unverified'; box.textContent = 'RUN LOCALLY';
   errorBox('challenge-error', 'A public static site cannot inspect your device or run local QVAC. Launch the local Studio to attempt the challenge.');
   set('evaluate-status', 'Stored measured results shown. Re-run locally.');
@@ -291,12 +317,21 @@ async function init() {
   $('prepare-button').addEventListener('click', prepareChallenge);
   $('verify-button').addEventListener('click', runChallenge);
   $('manual-confirm').addEventListener('change', () => { $('verify-button').disabled = !local || !prepared || !$('manual-confirm').checked; });
-  $('scan-button').addEventListener('click', async () => { try { showScan((await api('/api/migration')).scan); } catch (error) { set('migration-status', error.message); } });
+  $('scan-button').addEventListener('click', async () => { try { const scan = local ? (await api('/api/migration')).scan : browserWorkspace.scan(); showScan(scan); set('migration-status', `SCANNED ${scan.scannedFiles} SOURCE FILE / LIVE IN BROWSER`); } catch (error) { set('migration-status', error.message); } });
   $('migrate-button').addEventListener('click', () => migrationAction('run'));
   $('reset-button').addEventListener('click', () => migrationAction('reset'));
   $('evaluate-button').addEventListener('click', rerunEvaluation);
+  $('migration-report').addEventListener('click', () => exportJson('pocketify-migration-report.json',
+    { mode: local ? 'LIVE LOCAL QVAC' : 'LIVE IN BROWSER', ...lastMigration, workspace: local ? undefined : browserWorkspace.state }));
+  $('evidence-download').addEventListener('click', () => { if (selectedRecord) exportJson(`qvac-record-${selectedRecord.id}.json`,
+    { mode: 'RECORDED REAL QVAC', freshInference: false, ...selectedRecord }); });
+  $('network-button').addEventListener('click', runNetworkCheck);
+  $('network-download').addEventListener('click', () => { if (lastNetworkCheck) exportJson('pocketify-browser-network.json', lastNetworkCheck); });
+  for (const type of ['online', 'offline']) window.addEventListener(type, () => { networkEvents.push({ type, at: new Date().toISOString() }); set('network-state', navigator.onLine ? 'BROWSER REPORTS ONLINE' : 'BROWSER REPORTS OFFLINE'); });
+  set('network-state', navigator.onLine ? 'BROWSER REPORTS ONLINE' : 'BROWSER REPORTS OFFLINE');
   try { staticData = await (await fetch('./data.json', { cache: 'no-store' })).json(); }
   catch { staticData = { runs: [], source: '', seedConfig: {}, findings: [] }; }
+  browserWorkspace = makeWorkspace(staticData.source, staticData.seedConfig);
   const possibleLocal = ['127.0.0.1', 'localhost'].includes(location.hostname);
   if (possibleLocal) {
     try {
@@ -307,6 +342,7 @@ async function init() {
       set('result-status', 'READY FOR INPUT');
       set('result-summary', 'Choose a sample ticket or write your own, then run the model.');
       for (const id of ['analyze-button', 'prepare-button', 'evaluate-button']) $(id).disabled = false;
+      $('evidence-download').hidden = true;
     }
     catch { publicMode(); }
   } else publicMode();
@@ -317,10 +353,29 @@ async function init() {
     catch { renderBenchmarks(staticData.runs); }
     setInterval(refreshStatus, 15000);
   } else {
-    showMigration({ source: staticData.source, config: staticData.seedConfig });
-    showScan({ scannedFiles: 1, findings: staticData.findings });
+    showMigration(browserWorkspace.state);
     renderBenchmarks(staticData.runs);
     if (staticData.videoUrl) { $('video-link').href = staticData.videoUrl; $('video-link').hidden = false; set('video-state', 'AVAILABLE'); }
   }
+}
+
+async function runNetworkCheck() {
+  $('network-button').disabled = true;
+  set('network-result', 'Checking same-origin resources…');
+  const checks = [];
+  for (const resource of ['./mark.svg', './data.json']) {
+    const started = performance.now();
+    try {
+      const response = await fetch(`${resource}?network_check=${crypto.randomUUID()}`, {
+        cache: 'no-store', signal: AbortSignal.timeout(5000) });
+      checks.push({ resource, ok: response.ok, status: response.status, durationMs: Math.round(performance.now() - started), at: new Date().toISOString() });
+    } catch (error) { checks.push({ resource, ok: false, error: error.name || String(error), durationMs: Math.round(performance.now() - started), at: new Date().toISOString() }); }
+  }
+  lastNetworkCheck = { mode: 'LIVE IN BROWSER', at: new Date().toISOString(), navigatorOnline: navigator.onLine,
+    serviceWorkerControlled: Boolean(navigator.serviceWorker?.controller), checks, events: [...networkEvents],
+    verdict: diagnosticVerdict(checks), limitation: 'Same-origin fetch may be served by cache or service worker. Browser status and failed requests do not prove physical internet isolation.' };
+  set('network-result', `${lastNetworkCheck.verdict}\n${checks.map(x => `${x.resource}: ${x.ok ? `HTTP ${x.status}` : x.error} / ${x.durationMs} ms`).join('\n')}\n${lastNetworkCheck.limitation}`);
+  $('network-download').disabled = false;
+  $('network-button').disabled = false;
 }
 init();

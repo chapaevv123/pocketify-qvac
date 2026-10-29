@@ -1,5 +1,13 @@
 # POCKETIFY / STUDIO
 
+## Interactive release
+
+Pocketify moves a **supported** AI ticket workflow from a cloud API configuration to local QVAC inference. The public Render Static Site runs the source scanner, an isolated in-memory configuration migration with backup/reset/diff/report export, a recorded QVAC evidence explorer, and browser network diagnostics. These are labeled **LIVE IN BROWSER** or **RECORDED REAL QVAC**. Fresh inference and the offline challenge are **LIVE LOCAL QVAC** at `http://127.0.0.1:4317`.
+
+The public deployment URL has not been verified in this release. Source: https://github.com/chapaevv123/pocketify-qvac. To reproduce locally on Windows, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`; run `node .\qvac-gate.mjs` once online to cache the model. The local challenge now checks the cache, performs real warm-up inference, asks for physical disconnection, samples DNS/TCP/HTTPS/ICMP before and after another inference, and downloads a receipt containing input, output, timing and limitations. A PASS still needs owner verification with the network physically disconnected.
+
+Official QVAC SDK 0.22 documentation lists Node.js, Bare and Expo runtimes; its installed client uses `node:` modules and a Bare worker. Browser-only static inference is therefore not supported by the current integration. See [QVAC JS/TS SDK](https://docs.qvac.tether.io/sdk/js-ts-sdk/). No model weights are published in `site/`.
+
 **Turn off the internet. Keep the intelligence.**
 
 Move a supported AI workflow from cloud dependency to local QVAC inference — then prove it works offline. Pocketify Studio is a local developer instrument for real ticket triage, a conservative offline challenge, a controlled migration demo, and evidence-backed benchmarks. Built for **AI Yako: Own Your AI / Cloud to Pocket**.
@@ -18,7 +26,7 @@ From Windows PowerShell in this repository:
 
 Open **http://127.0.0.1:4317**. The launcher installs project-local packages only if missing, creates local QVAC config if needed, builds static evidence data, and starts the loopback-only server. Cache the model once while connected with `node .\qvac-gate.mjs`; the launcher does not download model weights automatically. If PowerShell blocks local scripts, use `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-studio.ps1`. `npm.cmd run studio` starts the server directly after setup.
 
-The same `site/` files form a **Render Static Site** after deployment. The public page lets visitors inspect recorded QVAC ticket outputs and measured evaluations; it cannot run QVAC or claim live inference. No public Render URL is claimed until the deployed site has been verified.
+The same `site/` files form a **Render Static Site** after deployment. The public page runs browser scanning, migration and network observations, and lets visitors inspect recorded QVAC outputs. It does not claim live QVAC inference. No public Render URL is claimed until verified.
 
 ## Render Static Site
 
