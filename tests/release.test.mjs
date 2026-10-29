@@ -49,12 +49,14 @@ test('sanitized receipts retain original INCONCLUSIVE decisions and probe errors
 
 test('film manifest and public video assets are complete', async () => {
   const manifest = JSON.parse(await read('media/source-manifest.json'));
-  assert.equal(manifest.durationSeconds, 101);
+  assert.equal(manifest.durationSeconds, 109);
+  assert.equal(manifest.sourceFiles.length, 4);
   assert.equal(manifest.playbackSpeed, 1);
-  assert.equal(manifest.scenes.reduce((sum, x) => sum + x.end - x.start, 0), 101);
+  assert.equal(manifest.scenes.reduce((sum, x) => sum + x.end - x.start, 0), 109);
   assert.ok(manifest.scenes.some(x => x.claim.includes('physical adapter state not shown')));
+  assert.ok(manifest.scenes.some(x => x.file === '04-powershell-network-proof.mp4' && x.redaction && x.claim.includes('no adapter state')));
   for (const asset of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
-    'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4',
+    'pocketify-offline-highlight.webp', 'pocketify-network-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4', 'pocketify-network-highlight.mp4',
     'pocketify-migration-highlight.mp4', 'pocketify-demo-captions.vtt'])
     assert.ok((await stat(path.join(site, 'media', asset))).size > 100);
 });

@@ -121,7 +121,7 @@ const assets = new Map([
   ['/evidence/receipts.json', ['evidence/receipts.json', 'application/json; charset=utf-8']],
 ]);
 for (const name of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
-  'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4',
+  'pocketify-offline-highlight.webp', 'pocketify-network-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4', 'pocketify-network-highlight.mp4',
   'pocketify-migration-highlight.mp4', 'pocketify-demo-captions.vtt', 'source-manifest.json']) {
   assets.set(`/media/${name}`, [`media/${name}`, name.endsWith('.mp4') ? 'video/mp4' : name.endsWith('.webp') ? 'image/webp' :
     name.endsWith('.vtt') ? 'text/vtt; charset=utf-8' : 'application/json; charset=utf-8']);

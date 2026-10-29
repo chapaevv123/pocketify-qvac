@@ -16,6 +16,8 @@ The public Render Static Site is useful without installation: visitors can execu
 
 The offline challenge checks the cached model, performs genuine warm-up inference, asks the user to disconnect through normal OS controls, samples DNS/TCP/HTTPS/ICMP before and after fresh inference, and exports a JSON receipt. It distinguishes a sampled connectivity observation from proof of complete physical isolation. The two historical receipts are **INCONCLUSIVE**: fresh QVAC output succeeded, but DNS returned an ambiguous `ECONNREFUSED` and no external route was observed reachable before disconnection. The supplied film does not show Windows adapter state.
 
+A supplementary PowerShell recording visibly shows failed TCP 1.1.1.1:443 and ping 1.1.1.1 checks, then genuine local QVAC inference in the same terminal. The latter returned `feature` for a CSV export crash ticket in 180 ms; its benchmark label is `bug`. The recording lacks a successful online baseline and visible adapter state. It is additional visual evidence, not a replacement for the historical INCONCLUSIVE receipts or absolute proof of isolation.
+
 Five genuine ten-ticket runs are preserved, including regressions: the original prompt scored 8/10, 6/10 and 6/10; a generic prompt revision scored 6/10 and 5/10 and was reverted. Cloud quality and latency were not measured. The interface shows mismatches and full source records rather than presenting only the favorable run.
 
 ## Technical highlights
@@ -32,7 +34,8 @@ Five genuine ten-ticket runs are preserved, including regressions: the original 
 | Item | URL |
 | --- | --- |
 | Public demo | https://pocketify-qvac.onrender.com/ |
-| 101-second video | https://pocketify-qvac.onrender.com/media/pocketify-demo-1080p.mp4 |
+| 109-second video | https://pocketify-qvac.onrender.com/media/pocketify-demo-1080p.mp4 |
+| PowerShell probe excerpt | https://pocketify-qvac.onrender.com/media/pocketify-network-highlight.mp4 |
 | Embedded player | https://pocketify-qvac.onrender.com/#watch |
 | Evidence and JSON receipts | https://pocketify-qvac.onrender.com/evidence.html |
 | Offline instructions | https://pocketify-qvac.onrender.com/offline.html |
@@ -46,4 +49,4 @@ The 0.6B model makes classification errors. The public site cannot run the QVAC 
 
 ## Media and provenance
 
-The final video is 101 seconds at 1920×1080, 30 fps, and uses only three original owner recordings. It has readable English captions, no added music and no speed manipulation. The [source manifest](../site/media/source-manifest.json) lists exact clips and timestamps; raw recordings are excluded from Git. [Full video notes](VIDEO_DEMO.md).
+The final video is 109 seconds at 1920×1080, 30 fps, and uses all four original owner recordings. It has readable English captions, no added music and no speed manipulation. The PowerShell excerpt is cropped to exclude a local user path; the original is untouched. The [source manifest](../site/media/source-manifest.json) lists exact clips and timestamps; raw recordings are excluded from Git. [Full video notes](VIDEO_DEMO.md).

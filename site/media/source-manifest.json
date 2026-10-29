@@ -1,12 +1,79 @@
 {
-  "durationSeconds": 101,
+  "durationSeconds": 109,
   "resolution": "1920x1080",
   "frameRate": 30,
   "playbackSpeed": 1,
   "sourceFiles": [
     "01-local-qvac.mp4",
     "02-public-render.mp4",
-    "03-offline-challenge.mp4"
+    "03-offline-challenge.mp4",
+    "04-powershell-network-proof.mp4"
+  ],
+  "sourceMetadata": [
+    {
+      "file": "01-local-qvac.mp4",
+      "durationSeconds": 29,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 2560,
+          "height": 1410,
+          "r_frame_rate": "60/1"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "file": "02-public-render.mp4",
+      "durationSeconds": 114.45,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 2560,
+          "height": 1410,
+          "r_frame_rate": "60/1"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "file": "03-offline-challenge.mp4",
+      "durationSeconds": 21.183,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 2560,
+          "height": 1410,
+          "r_frame_rate": "60/1"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "file": "04-powershell-network-proof.mp4",
+      "durationSeconds": 34.3,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 2560,
+          "height": 1410,
+          "r_frame_rate": "60/1"
+        },
+        {
+          "codec_name": "aac",
+          "r_frame_rate": "0/0"
+        }
+      ]
+    }
   ],
   "scenes": [
     {
@@ -60,14 +127,26 @@
       "montageEnd": 72
     },
     {
+      "file": "04-powershell-network-proof.mp4",
+      "start": 4,
+      "end": 12,
+      "title": "POWERSHELL OBSERVATION",
+      "caption": "TCP 1.1.1.1:443 and ping 1.1.1.1 failed",
+      "claim": "Two sampled external routes failed; no adapter state or online baseline shown",
+      "crop": "crop=1280:720:0:144,scale=1920:1080",
+      "redaction": "Frame crop excludes the PowerShell prompt containing the local user path",
+      "montageStart": 72,
+      "montageEnd": 80
+    },
+    {
       "file": "02-public-render.mp4",
       "start": 45,
       "end": 60,
       "title": "MEASURED EVIDENCE",
       "caption": "Five genuine ten-ticket runs  5 to 8 correct",
       "claim": "Benchmark and evidence sections",
-      "montageStart": 72,
-      "montageEnd": 87
+      "montageStart": 80,
+      "montageEnd": 95
     },
     {
       "file": "02-public-render.mp4",
@@ -76,8 +155,8 @@
       "title": "OPEN SOURCE",
       "caption": "Inspect the repository and reproduce the local run",
       "claim": "GitHub repository visible",
-      "montageStart": 87,
-      "montageEnd": 95
+      "montageStart": 95,
+      "montageEnd": 103
     },
     {
       "file": "02-public-render.mp4",
@@ -86,12 +165,12 @@
       "title": "POCKETIFY STUDIO",
       "caption": "Public lab  Local QVAC  Honest evidence",
       "claim": "Public homepage outro",
-      "montageStart": 95,
-      "montageEnd": 101
+      "montageStart": 103,
+      "montageEnd": 109
     }
   ],
   "limitations": [
-    "No Windows network adapter state appears in the supplied footage.",
+    "The PowerShell excerpt shows failed TCP and ICMP checks for 1.1.1.1; no Windows adapter state or reachable online baseline appears in the supplied footage.",
     "The visible offline challenge verdict is INCONCLUSIVE.",
     "Source audio is near silent; final video uses captioned visuals without music.",
     "Benchmark footage shows a historical experimental 5/10 run; all five runs are preserved."

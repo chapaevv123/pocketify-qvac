@@ -2,7 +2,7 @@
 
 ## Final film and local challenge audit
 
-The [101-second film](../site/media/pocketify-demo-1080p.mp4) uses authentic owner recordings at original playback speed. Its [source manifest](../site/media/source-manifest.json) lists exact timestamps. The visible local challenge ends **INCONCLUSIVE**; the film contains no independent Windows adapter-state shot.
+The [109-second film](../site/media/pocketify-demo-1080p.mp4) uses all four authentic owner recordings at original playback speed. Its [source manifest](../site/media/source-manifest.json) lists exact timestamps. Source 04 shows failed TCP and ICMP checks to 1.1.1.1 and a later 180 ms genuine local QVAC inference that misclassifies a CSV crash as `feature` (benchmark truth `bug`). The published excerpt crops out the local user path. No source shows a successful pre-disconnect baseline or Windows adapter state, and no new automated PASS receipt exists. The visible local challenge remains **INCONCLUSIVE**.
 
 Two raw local receipts, `38baaf0f-f070-4e61-bf1a-5c55b8a5199c` and `63ac8842-8be4-48fa-952e-39bbb728a002`, record genuine fresh inference at 242 ms and 223 ms. Both have DNS `UNAVAILABLE / ECONNREFUSED`; TCP `BLOCKED / ENETUNREACH`; HTTPS `BLOCKED / ENOTFOUND` under the earlier classifier; and ICMP `BLOCKED / exit 1`. Both baseline and before/after aggregate status were UNVERIFIED under the earlier code; final verdict was INCONCLUSIVE. The current classifier treats HTTPS name-resolution failure as UNAVAILABLE too, making the reason clearer, without changing historical receipts. No reachable external route was observed before disconnection. [Sanitized downloadable receipts](../site/evidence/receipts.json) and [decision audit](OFFLINE_AUDIT.md) provide detail.
 

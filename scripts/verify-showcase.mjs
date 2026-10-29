@@ -73,6 +73,10 @@ try {
   await new Promise((resolve) => setTimeout(resolve, 400));
   const offlineClip = await evaluate('({ready:document.querySelector("video").readyState,time:document.querySelector("video").currentTime,error:document.querySelector("video").error?.message||null})');
   if (offlineClip.ready < 2 || offlineClip.error || offlineClip.time <= 0) throw new Error(`Offline highlight failed: ${JSON.stringify(offlineClip)}`);
+  await evaluate('document.querySelectorAll("video")[1].muted=true; document.querySelectorAll("video")[1].play().catch(()=>{}); true');
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  const networkClip = await evaluate('({ready:document.querySelectorAll("video")[1].readyState,time:document.querySelectorAll("video")[1].currentTime,error:document.querySelectorAll("video")[1].error?.message||null})');
+  if (networkClip.ready < 2 || networkClip.error || networkClip.time <= 0) throw new Error(`PowerShell highlight failed: ${JSON.stringify(networkClip)}`);
   await command('Page.navigate', { url: 'http://127.0.0.2:4320/evidence.html' });
   await new Promise((resolve) => setTimeout(resolve, 750));
   const evidencePage = await evaluate('({runs:document.querySelectorAll("#run-cards article").length,receipts:document.querySelectorAll("#receipt-cards article").length,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})');
@@ -88,5 +92,5 @@ try {
   const video = await evaluate('({ready:document.querySelector("#watch video").readyState,time:document.querySelector("#watch video").currentTime,error:document.querySelector("#watch video").error?.message||null})');
   if (video.ready < 2 || video.error || video.time <= 0) throw new Error(`Video playback failed: ${JSON.stringify(video)}`);
   if (errors.length) throw new Error(`Browser console errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, offlinePage, offlineClip, evidencePage, migrationClip, video, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
+  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, offlinePage, offlineClip, networkClip, evidencePage, migrationClip, video, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
 } finally { socket.close(); }

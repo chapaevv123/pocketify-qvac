@@ -16,12 +16,20 @@ const scenes = [
   { file: '02-public-render.mp4', start: 24, end: 38, title: 'LIVE IN BROWSER', caption: 'Scan the bundled source and migrate an isolated config', claim: 'Public browser migration and diff' },
   { file: '01-local-qvac.mp4', start: 0, end: 22, title: 'LIVE LOCAL QVAC', caption: 'Fresh support ticket inference on the cached model', claim: 'Visible local inference with genuine output' },
   { file: '03-offline-challenge.mp4', start: 4, end: 21, title: 'OFFLINE CHALLENGE', caption: 'Selected routes failed  Verdict INCONCLUSIVE', claim: 'Challenge UI and inconclusive verdict; physical adapter state not shown' },
+  { file: '04-powershell-network-proof.mp4', start: 4, end: 12, title: 'POWERSHELL OBSERVATION', caption: 'TCP 1.1.1.1:443 and ping 1.1.1.1 failed', claim: 'Two sampled external routes failed; no adapter state or online baseline shown', crop: 'crop=1280:720:0:144,scale=1920:1080', redaction: 'Frame crop excludes the PowerShell prompt containing the local user path' },
   { file: '02-public-render.mp4', start: 45, end: 60, title: 'MEASURED EVIDENCE', caption: 'Five genuine ten-ticket runs  5 to 8 correct', claim: 'Benchmark and evidence sections' },
   { file: '02-public-render.mp4', start: 63, end: 71, title: 'OPEN SOURCE', caption: 'Inspect the repository and reproduce the local run', claim: 'GitHub repository visible' },
   { file: '02-public-render.mp4', start: 108, end: 114, title: 'POCKETIFY STUDIO', caption: 'Public lab  Local QVAC  Honest evidence', claim: 'Public homepage outro' },
 ];
 const duration = scenes.reduce((sum, scene) => sum + scene.end - scene.start, 0);
-if (duration < 90 || duration > 110) throw new Error(`Montage duration ${duration}s is outside target`);
+if (duration < 100 || duration > 120) throw new Error(`Montage duration ${duration}s is outside target`);
+const sourceFiles = ['01-local-qvac.mp4', '02-public-render.mp4', '03-offline-challenge.mp4', '04-powershell-network-proof.mp4'];
+const sourceMetadata = sourceFiles.map(file => {
+  const result = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration:stream=codec_name,width,height,r_frame_rate', '-of', 'json', path.join(raw, file)], { encoding: 'utf8' });
+  if (result.status !== 0) throw new Error(`ffprobe failed for ${file}`);
+  const probe = JSON.parse(result.stdout);
+  return { file, durationSeconds: Number(probe.format.duration), streams: probe.streams };
+});
 const font = process.platform === 'win32' ? 'C\\:/Windows/Fonts/arialbd.ttf' : '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
 function run(args) {
   const result = spawnSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args], { cwd: root, stdio: 'inherit' });
@@ -38,7 +46,7 @@ for (const [index, scene] of scenes.entries()) {
   const output = path.join(work, `scene-${String(index + 1).padStart(2, '0')}.mp4`);
   const seconds = scene.end - scene.start;
   const zoom = index === 2 || index === 3 || index === 4;
-  const spatial = zoom ? 'crop=2304:1296:128:57,scale=1920:1080' : 'crop=2507:1410:26:0,scale=1920:1080';
+  const spatial = scene.crop ?? (zoom ? 'crop=2304:1296:128:57,scale=1920:1080' : 'crop=2507:1410:26:0,scale=1920:1080');
   const filter = `${spatial},fps=30,format=yuv420p,drawbox=x=0:y=892:w=iw:h=188:color=0x10231f@0.94:t=fill,` +
     `drawtext=fontfile='${font}':text='${escapeText(scene.title)}':fontcolor=0xb9f0cb:fontsize=52:x=72:y=917,` +
     `drawtext=fontfile='${font}':text='${escapeText(scene.caption)}':fontcolor=0xf2f0e9:fontsize=30:x=74:y=994`;
@@ -56,15 +64,17 @@ run(['-f', 'concat', '-safe', '0', '-i', path.join(work, 'concat.txt'), '-c', 'c
 run(['-i', final, '-vf', 'scale=960:540', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '28', '-an', '-movflags', '+faststart', path.join(out, 'pocketify-demo-preview.mp4')]);
 run(['-ss', '0.5', '-i', final, '-frames:v', '1', '-vf', 'scale=1280:720', '-quality', '78', path.join(out, 'pocketify-demo-poster.webp')]);
 run(['-ss', '63', '-i', final, '-frames:v', '1', '-vf', 'scale=960:540', '-quality', '76', path.join(out, 'pocketify-offline-highlight.webp')]);
+run(['-ss', '74', '-i', final, '-frames:v', '1', '-vf', 'scale=960:540', '-quality', '76', path.join(out, 'pocketify-network-highlight.webp')]);
 run(['-ss', '26', '-i', final, '-frames:v', '1', '-vf', 'scale=960:540', '-quality', '76', path.join(out, 'pocketify-migration-highlight.webp')]);
 await copyFile(path.join(work, 'scene-03.mp4'), path.join(out, 'pocketify-migration-highlight.mp4'));
 await copyFile(path.join(work, 'scene-05.mp4'), path.join(out, 'pocketify-offline-highlight.mp4'));
+await copyFile(path.join(work, 'scene-06.mp4'), path.join(out, 'pocketify-network-highlight.mp4'));
 await writeFile(path.join(out, 'pocketify-demo-captions.vtt'), cues.join('\n'));
 const manifest = JSON.stringify({
   durationSeconds: duration, resolution: '1920x1080', frameRate: 30, playbackSpeed: 1,
-  sourceFiles: ['01-local-qvac.mp4', '02-public-render.mp4', '03-offline-challenge.mp4'],
+  sourceFiles, sourceMetadata,
   scenes, limitations: [
-    'No Windows network adapter state appears in the supplied footage.',
+    'The PowerShell excerpt shows failed TCP and ICMP checks for 1.1.1.1; no Windows adapter state or reachable online baseline appears in the supplied footage.',
     'The visible offline challenge verdict is INCONCLUSIVE.',
     'Source audio is near silent; final video uses captioned visuals without music.',
     'Benchmark footage shows a historical experimental 5/10 run; all five runs are preserved.'
@@ -73,7 +83,7 @@ await writeFile(path.join(out, 'source-manifest.json'), manifest);
 const publicMedia = path.join(root, 'site/media');
 await mkdir(publicMedia, { recursive: true });
 for (const name of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
-  'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4',
+  'pocketify-offline-highlight.webp', 'pocketify-network-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4', 'pocketify-network-highlight.mp4',
   'pocketify-migration-highlight.mp4', 'pocketify-demo-captions.vtt'])
   await copyFile(path.join(out, name), path.join(publicMedia, name));
 await writeFile(path.join(publicMedia, 'source-manifest.json'), manifest);

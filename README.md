@@ -4,7 +4,7 @@
 
 [![Pocketify Studio public demo](site/media/pocketify-demo-poster.webp)](https://pocketify-qvac.onrender.com/#watch)
 
-**[Watch the 101-second film](https://pocketify-qvac.onrender.com/#watch)** · **[Try the public lab](https://pocketify-qvac.onrender.com/)** · **[Offline instructions](https://pocketify-qvac.onrender.com/offline.html)** · **[Evidence and receipts](https://pocketify-qvac.onrender.com/evidence.html)**
+**[Watch the 109-second film](https://pocketify-qvac.onrender.com/#watch)** · **[Try the public lab](https://pocketify-qvac.onrender.com/)** · **[Offline instructions](https://pocketify-qvac.onrender.com/offline.html)** · **[Evidence and receipts](https://pocketify-qvac.onrender.com/evidence.html)**
 
 ## What judges can try
 
@@ -50,6 +50,10 @@ The ten-ticket synthetic evaluation has fixed ground truth. Original-prompt runs
 
 Two historical challenge receipts show real QVAC inference while selected external checks failed, but their verdict is **INCONCLUSIVE**. DNS returned `UNAVAILABLE / ECONNREFUSED`, no reachable external route was observed before disconnection, and the supplied recording does not show Windows adapter state. The [offline audit](docs/OFFLINE_AUDIT.md) explains the exact decision.
 
+## Offline Evidence — What Was Actually Verified
+
+The supplementary [PowerShell excerpt](https://pocketify-qvac.onrender.com/media/pocketify-network-highlight.mp4) visibly records failed TCP 1.1.1.1:443 and ping 1.1.1.1 checks. Later in that same source recording, `demo-offline.cmd` completes genuine local QVAC inference in **180 ms** for a CSV export crash ticket, returning `feature`; the benchmark label is `bug`, so this is an error. The video has no successful online connectivity baseline or visible Windows adapter state, and does not link the CLI run continuously to a Studio receipt. The two historical Studio receipts remain **INCONCLUSIVE**. [Method and timestamps](docs/OFFLINE_AUDIT.md).
+
 ## Verify and inspect
 
 ```powershell
@@ -60,7 +64,7 @@ npm.cmd run test:studio:integration
 npm.cmd run build:showcase
 ```
 
-The interactive static site is built by `node scripts/build-showcase.mjs` and published from `site/` on Render. The edited 101-second video is reproducible with `node scripts/montage-demo.mjs` when FFmpeg and the original private recordings are available; [source timestamps](site/media/source-manifest.json) are public. Raw recordings are ignored by Git. The final captioned MP4 is 5.8 MB and is published as a static asset for direct playback.
+The interactive static site is built by `node scripts/build-showcase.mjs` and published from `site/` on Render. The edited 109-second video is reproducible with `node scripts/montage-demo.mjs` when FFmpeg and the four original private recordings are available; [source timestamps](site/media/source-manifest.json) are public. Raw recordings are ignored by Git. The final captioned MP4 is 5.8 MB and is published as a static asset for direct playback.
 
 More detail: [evidence](docs/EVIDENCE.md), [offline verification](docs/OFFLINE_AUDIT.md), [architecture](docs/ARCHITECTURE.md), [security](docs/SECURITY.md), [submission text](docs/SUBMISSION.md), [video notes](docs/VIDEO_DEMO.md).
 
