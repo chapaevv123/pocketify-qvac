@@ -1,6 +1,6 @@
 # Final demo film
 
-The edited [101-second MP4](../site/media/pocketify-demo-1080p.mp4) is 1920×1080 H.264 at 30 fps. The [preview](../site/media/pocketify-demo-preview.mp4), [poster](../site/media/pocketify-demo-poster.webp), [captions](../site/media/pocketify-demo-captions.vtt), [offline highlight](../site/media/pocketify-offline-highlight.webp) and [migration highlight](../site/media/pocketify-migration-highlight.webp) are published with the Static Site.
+The edited [101-second MP4](../site/media/pocketify-demo-1080p.mp4) is 1920×1080 H.264 at 30 fps. The [preview](../site/media/pocketify-demo-preview.mp4), [poster](../site/media/pocketify-demo-poster.webp), [captions](../site/media/pocketify-demo-captions.vtt), [17-second offline clip](../site/media/pocketify-offline-highlight.mp4), [14-second migration clip](../site/media/pocketify-migration-highlight.mp4) and WebP highlights are published with the Static Site.
 
 The [machine-readable source manifest](../site/media/source-manifest.json) records exact source in/out and final timeline positions. Rebuild with `node scripts/montage-demo.mjs` after placing the three original recordings under ignored `media/raw/` and installing FFmpeg. The script does not alter originals or playback speed and adds no music.
 

@@ -31,6 +31,7 @@ test('ambiguous probe failures cannot become offline proof', () => {
   assert.equal(classifyProbeError({ code: 'ECONNREFUSED' }, 'dns').state, 'UNAVAILABLE');
   assert.equal(classifyProbeError({ code: 'ECONNREFUSED' }, 'tcp').state, 'REACHABLE');
   assert.equal(classifyProbeError({ code: 'ENOTFOUND' }, 'https').state, 'UNAVAILABLE');
+  assert.equal(classifyProbeError({ code: 'EACCES' }, 'tcp').state, 'UNAVAILABLE');
   assert.equal(classifyProbeError({ code: 'ENETUNREACH' }, 'tcp').state, 'BLOCKED');
 });
 

@@ -69,10 +69,18 @@ try {
   await new Promise((resolve) => setTimeout(resolve, 500));
   const offlinePage = await evaluate('({title:document.title,steps:document.querySelectorAll(".step-card").length,copy:document.querySelectorAll("[data-copy]").length,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})');
   if (offlinePage.steps !== 10 || offlinePage.copy < 4 || offlinePage.scrollWidth > offlinePage.width + 1) throw new Error(`Offline guide failed: ${JSON.stringify(offlinePage)}`);
+  await evaluate('document.querySelector("video").muted=true; document.querySelector("video").play().catch(()=>{}); true');
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  const offlineClip = await evaluate('({ready:document.querySelector("video").readyState,time:document.querySelector("video").currentTime,error:document.querySelector("video").error?.message||null})');
+  if (offlineClip.ready < 2 || offlineClip.error || offlineClip.time <= 0) throw new Error(`Offline highlight failed: ${JSON.stringify(offlineClip)}`);
   await command('Page.navigate', { url: 'http://127.0.0.2:4320/evidence.html' });
   await new Promise((resolve) => setTimeout(resolve, 750));
   const evidencePage = await evaluate('({runs:document.querySelectorAll("#run-cards article").length,receipts:document.querySelectorAll("#receipt-cards article").length,width:innerWidth,scrollWidth:document.documentElement.scrollWidth})');
   if (evidencePage.runs !== 5 || evidencePage.receipts !== 2 || evidencePage.scrollWidth > evidencePage.width + 1) throw new Error(`Evidence page failed: ${JSON.stringify(evidencePage)}`);
+  await evaluate('document.querySelector("video").muted=true; document.querySelector("video").play().catch(()=>{}); true');
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  const migrationClip = await evaluate('({ready:document.querySelector("video").readyState,time:document.querySelector("video").currentTime,error:document.querySelector("video").error?.message||null})');
+  if (migrationClip.ready < 2 || migrationClip.error || migrationClip.time <= 0) throw new Error(`Migration highlight failed: ${JSON.stringify(migrationClip)}`);
   await command('Page.navigate', { url: 'http://127.0.0.2:4320/' });
   await new Promise((resolve) => setTimeout(resolve, 650));
   await evaluate('document.querySelector("#watch video").muted=true; document.querySelector("#watch video").play().catch(()=>{}); true');
@@ -80,5 +88,5 @@ try {
   const video = await evaluate('({ready:document.querySelector("#watch video").readyState,time:document.querySelector("#watch video").currentTime,error:document.querySelector("#watch video").error?.message||null})');
   if (video.ready < 2 || video.error || video.time <= 0) throw new Error(`Video playback failed: ${JSON.stringify(video)}`);
   if (errors.length) throw new Error(`Browser console errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, offlinePage, evidencePage, video, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
+  console.log(JSON.stringify({ initial, selected, migration: { backedUp: true, diff: true }, network, offlineNetwork, layout, offlinePage, offlineClip, evidencePage, migrationClip, video, heroLinks: anchors.length, consoleErrors: errors.length }, null, 2));
 } finally { socket.close(); }

@@ -57,6 +57,8 @@ run(['-i', final, '-vf', 'scale=960:540', '-c:v', 'libx264', '-preset', 'veryfas
 run(['-ss', '0.5', '-i', final, '-frames:v', '1', '-vf', 'scale=1280:720', '-quality', '78', path.join(out, 'pocketify-demo-poster.webp')]);
 run(['-ss', '63', '-i', final, '-frames:v', '1', '-vf', 'scale=960:540', '-quality', '76', path.join(out, 'pocketify-offline-highlight.webp')]);
 run(['-ss', '26', '-i', final, '-frames:v', '1', '-vf', 'scale=960:540', '-quality', '76', path.join(out, 'pocketify-migration-highlight.webp')]);
+await copyFile(path.join(work, 'scene-03.mp4'), path.join(out, 'pocketify-migration-highlight.mp4'));
+await copyFile(path.join(work, 'scene-05.mp4'), path.join(out, 'pocketify-offline-highlight.mp4'));
 await writeFile(path.join(out, 'pocketify-demo-captions.vtt'), cues.join('\n'));
 const manifest = JSON.stringify({
   durationSeconds: duration, resolution: '1920x1080', frameRate: 30, playbackSpeed: 1,
@@ -71,7 +73,8 @@ await writeFile(path.join(out, 'source-manifest.json'), manifest);
 const publicMedia = path.join(root, 'site/media');
 await mkdir(publicMedia, { recursive: true });
 for (const name of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
-  'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-demo-captions.vtt'])
+  'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4',
+  'pocketify-migration-highlight.mp4', 'pocketify-demo-captions.vtt'])
   await copyFile(path.join(out, name), path.join(publicMedia, name));
 await writeFile(path.join(publicMedia, 'source-manifest.json'), manifest);
 console.log(`Produced ${duration}s montage at ${final}`);

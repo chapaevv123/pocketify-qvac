@@ -6,8 +6,8 @@ Two original local receipts were reviewed without changing their verdicts:
 
 | UTC | Receipt | Warm-up | Fresh inference | Before / after | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| 2026-10-29 07:56:03 | `38baaf0f-f070-4e61-bf1a-5c55b8a5199c` | completed | completed, 242 ms | INCONCLUSIVE / INCONCLUSIVE | INCONCLUSIVE |
-| 2026-10-29 07:56:39 | `63ac8842-8be4-48fa-952e-39bbb728a002` | completed | completed, 223 ms | INCONCLUSIVE / INCONCLUSIVE | INCONCLUSIVE |
+| 2026-10-29 07:56:03 | `38baaf0f-f070-4e61-bf1a-5c55b8a5199c` | completed | completed, 242 ms | UNVERIFIED / UNVERIFIED (historical aggregate label) | INCONCLUSIVE |
+| 2026-10-29 07:56:39 | `63ac8842-8be4-48fa-952e-39bbb728a002` | completed | completed, 223 ms | UNVERIFIED / UNVERIFIED (historical aggregate label) | INCONCLUSIVE |
 
 The selected DNS query returned `ECONNREFUSED` and is classified `UNAVAILABLE`: this can reflect a resolver, local stack or network policy response and cannot establish physical disconnection. The direct TCP check returned `ENETUNREACH`; HTTPS failed name resolution; ICMP exited nonzero. No external route was observed reachable during the supposed online baseline, so there is no observed reachable-to-blocked transition. The video shows owner acknowledgement and the final verdict but does not show Windows adapter state.
 
@@ -15,7 +15,7 @@ The public [evidence page](https://pocketify-qvac.onrender.com/evidence.html) pr
 
 ## Current decision rule
 
-`studio/probes.mjs` separates per-probe `REACHABLE`, `BLOCKED` and `UNAVAILABLE` from aggregate `INCONCLUSIVE`. DNS `ECONNREFUSED` and HTTPS name-resolution errors remain `UNAVAILABLE`; TCP `ECONNREFUSED` conservatively indicates a reachable route. A challenge returns FAIL if fresh inference fails or any external route is reachable during verification. It returns PASS only if genuine warm-up and fresh inference completed, manual disconnect was acknowledged, an external route was observed reachable before disconnection, and every selected probe was BLOCKED before and after fresh inference. All other states are INCONCLUSIVE. Each new receipt records the reason as well as raw probes.
+`studio/probes.mjs` separates per-probe `REACHABLE`, `BLOCKED` and `UNAVAILABLE` from aggregate `INCONCLUSIVE`. DNS `ECONNREFUSED`, HTTPS name-resolution errors and local `EACCES` permission failures remain `UNAVAILABLE`; TCP `ECONNREFUSED` conservatively indicates a reachable route. A challenge returns FAIL if fresh inference fails or any external route is reachable during verification. It returns PASS only if genuine warm-up and fresh inference completed, manual disconnect was acknowledged, an external route was observed reachable before disconnection, and every selected probe was BLOCKED before and after fresh inference. All other states are INCONCLUSIVE. Each new receipt records the reason as well as raw probes.
 
 These observations are bounded. Even PASS cannot establish absolute physical isolation of every possible path.
 

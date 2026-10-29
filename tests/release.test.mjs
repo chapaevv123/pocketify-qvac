@@ -54,6 +54,7 @@ test('film manifest and public video assets are complete', async () => {
   assert.equal(manifest.scenes.reduce((sum, x) => sum + x.end - x.start, 0), 101);
   assert.ok(manifest.scenes.some(x => x.claim.includes('physical adapter state not shown')));
   for (const asset of ['pocketify-demo-1080p.mp4', 'pocketify-demo-preview.mp4', 'pocketify-demo-poster.webp',
-    'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-demo-captions.vtt'])
+    'pocketify-offline-highlight.webp', 'pocketify-migration-highlight.webp', 'pocketify-offline-highlight.mp4',
+    'pocketify-migration-highlight.mp4', 'pocketify-demo-captions.vtt'])
     assert.ok((await stat(path.join(site, 'media', asset))).size > 100);
 });

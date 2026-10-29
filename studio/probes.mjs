@@ -5,8 +5,8 @@ import { spawn } from 'node:child_process';
 const LIMIT_MS = 2500;
 const resolver = new dns.Resolver();
 resolver.setServers(['1.1.1.1']);
-const blockedCodes = new Set(['EACCES', 'ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT']);
-const ambiguousCodes = new Set(['ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ABORT_ERR', 'TimeoutError']);
+const blockedCodes = new Set(['ENETUNREACH', 'EHOSTUNREACH', 'ETIMEDOUT']);
+const ambiguousCodes = new Set(['EACCES', 'ECONNREFUSED', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET', 'ABORT_ERR', 'TimeoutError']);
 const make = (name, target, state, detail, durationMs) => ({ name, target, state, detail, durationMs });
 
 export function classifyProbeError(error, transport = 'generic') {
