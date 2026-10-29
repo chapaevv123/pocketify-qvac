@@ -11,7 +11,7 @@ const seed = JSON.parse(await readFile(path.join(root, 'studio', 'seed', 'pocket
 const source = await readFile(path.join(root, 'examples', 'ticket-triage', 'app.mjs'), 'utf8');
 const scan = await scanRepository(path.join(root, 'examples', 'ticket-triage'));
 const data = {
-  generatedAt: new Date().toISOString(),
+  generatedAt: runs.at(-1).generatedAt,
   mode: 'PUBLIC_SHOWCASE',
   repository: 'https://github.com/chapaevv123/pocketify-qvac',
   videoUrl: null,

@@ -2,7 +2,7 @@
 
 ## Interactive public release note
 
-The public Static Site now executes a browser scanner over the bundled example source and migrates an isolated in-memory configuration. Visitors can inspect the exact diff, backup, real recorded QVAC outputs, individual mismatches, and browser network request timings; JSON exports are available. Fresh QVAC inference still runs only in the loopback Studio. The public URL remains unverified. The offline challenge requires a manual physical disconnect and has no verified PASS receipt yet. Use `docs/VIDEO_DEMO.md` for the current recording sequence.
+The public Static Site now executes a browser scanner over the bundled example source and migrates an isolated in-memory configuration. Visitors can inspect the exact diff, backup, real recorded QVAC outputs, individual mismatches, and browser network request timings; JSON exports are available. Fresh QVAC inference still runs only in the loopback Studio. Existing public URL: https://pocketify-qvac.onrender.com/; verify the new release after Render deploys. The offline challenge requires a manual physical disconnect and has no verified PASS receipt yet. Use `docs/VIDEO_DEMO.md` for the current recording sequence.
 
 ## Title and pitch
 
@@ -16,7 +16,7 @@ Support teams often send ticket text to a cloud LLM just to choose a queue and w
 
 Pocketify Studio adds a browser-based local instrument on `127.0.0.1:4317`. Judges can submit a ticket and see genuine local classification, summary, model identity and timing. The Offline Challenge prepares and warms up the model, asks the owner to disconnect manually, checks DNS/TCP/HTTPS/ICMP before and after fresh inference, and exports a JSON receipt. PASS requires all tested external routes blocked; any reachable route forces FAIL. The Render Static Site runs interactive scanner, in-memory migration, recorded evidence exploration and browser diagnostics. The public site never simulates inference.
 
-Measured runs with the release prompt on Windows 10 Pro, NVIDIA RTX 3070 and 32 GB RAM classified between 6/10 and 8/10 tickets correctly. The latest run scored 6/10 with 161.5 ms median inference and 6,006 ms model load. One earlier run scored 8/10 with 150 ms median inference. Each had a roughly 7-second first generation. This variability is a known quality limit of the small model. Cloud quality and latency were NOT MEASURED. The owner-run cached QVAC inference succeeded, but the saved offline log lacks a simultaneous connectivity record; manual network-disconnection recording is needed for final judging evidence.
+Original-prompt runs on Windows 10 Pro, NVIDIA RTX 3070 and 32 GB RAM scored 8/10, 6/10 and 6/10 with 150, 158 and 161.5 ms median inference. A generic prompt clarification scored 6/10 and 5/10, so it was reverted; both experimental runs remain available. First generation includes warm-up. Cloud quality and latency were NOT MEASURED. The owner-run cached QVAC inference succeeded, but the saved offline log lacks a simultaneous connectivity record; manual network-disconnection recording is needed for final judging evidence.
 
 ## Track justification — Cloud to Pocket
 
@@ -28,7 +28,7 @@ The original architecture points an OpenAI-compatible client at a remote cloud A
 
 ## Demo and disclosure
 
-Setup: `scripts/setup.ps1`, then `node qvac-gate.mjs` while online. Launch with `scripts/start-studio.ps1` and open `http://127.0.0.1:4317`. Use the Live Lab, prepare the cached model, disconnect internet manually, and run the Offline Challenge. Download its receipt and capture Windows' disconnected state in the demo recording. The original CLI offline script remains available. The existing source repo is `https://github.com/chapaevv123/pocketify-qvac`; the Render Static Site URL must be added only after deployment and verification. A playable video link is unavailable until the owner records it. This project was built during the hackathon; QVAC SDK, QVAC CLI and Unsloth model weights are third-party work. No customer data, API keys or paid AI requests are included.
+Setup: `scripts/setup.ps1`, then `node qvac-gate.mjs` while online. Launch with `scripts/start-studio.ps1` and open `http://127.0.0.1:4317`. Use the Live Lab, prepare the cached model, disconnect internet manually, and run the Offline Challenge. Download its receipt and capture Windows' disconnected state in the demo recording. The original CLI offline script remains available. Source: `https://github.com/chapaevv123/pocketify-qvac`; existing Render URL: `https://pocketify-qvac.onrender.com/` (verify new release after deploy). A playable video link is unavailable until the owner records it. This project was built during the hackathon; QVAC SDK, QVAC CLI and Unsloth model weights are third-party work. No customer data, API keys or paid AI requests are included.
 
 ## 90-second demo script
 
@@ -36,14 +36,14 @@ Setup: `scripts/setup.ps1`, then `node qvac-gate.mjs` while online. Launch with 
 | --- | --- |
 | 0–10 s | Show the Studio hero and say: “Turn off the internet. Keep the intelligence.” Click Explore the Demo. |
 | 10–30 s | Select a synthetic ticket; click Analyze Locally. Show actual category, summary, QVAC model and latency. |
-| 30–55 s | Click Start Offline Challenge, disconnect Wi-Fi or Ethernet visibly, confirm manual disconnection, click Verify & Infer. Show probes, real result and downloaded receipt. If probes are not all blocked, state the actual FAIL/UNVERIFIED result. |
+| 30–55 s | Click Start Offline Challenge, disconnect Wi-Fi or Ethernet visibly, confirm manual disconnection, click Verify & Infer. Show probes, real result and downloaded receipt. If probes are not all blocked, state the actual FAIL/INCONCLUSIVE result. |
 | 55–75 s | Click See the Migration, run scanner and apply migration. Show the detected call site, QVAC config and preserved cloud backup. |
 | 75–90 s | Show benchmark matrix, 6/10–8/10 run variability, cloud NOT MEASURED, evidence ledger and GitHub repository. |
 
 ## Shot list and evidence to capture
 
 1. A playable screen recording and Windows network UI showing physical disconnection during the Studio challenge.
-2. Downloaded challenge receipt JSON, its PASS/FAIL/UNVERIFIED result, and terminal output from real QVAC inference. Keep private local paths out of public screenshots.
+2. Downloaded challenge receipt JSON, its PASS/FAIL/INCONCLUSIVE result, and terminal output from real QVAC inference. Keep private local paths out of public screenshots.
 3. Scanner output, migrated config and preserved backup in the dedicated workspace.
 4. Benchmark matrix and actual stored JSON reports; show cloud NOT MEASURED.
 5. Repository README, Studio screenshot, Render showcase if deployed, source integration and license disclosure.

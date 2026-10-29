@@ -5,7 +5,7 @@
   "type": "module",
   "bin": { "pocketify": "./pocketify.mjs" },
   "scripts": {
-    "test": "node --test tests/unit.test.mjs",
+    "test": "node --test tests/unit.test.mjs tests/browser-lab.test.mjs",
     "test:integration": "node --test tests/qvac.integration.test.mjs",
     "scan": "node pocketify.mjs scan examples/ticket-triage",
     "triage": "node pocketify.mjs triage",
